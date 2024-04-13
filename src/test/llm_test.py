@@ -9,6 +9,18 @@ class TestLLM(unittest.TestCase):
         res = llm.chat("Hi, Please tell me your name. The format of your output should be : My name is <NAME>.")
         self.assertGreater(len(res), 0, msg=f"llm response if {res}")
 
+    def test_vl_model(self):
+        llm = LLM("gpt-4-turbo-1")
+        with self.assertRaises(ValueError):
+            res = llm.chat_v("Please describe the picture in general. Thanks!",
+                             img_url="https://picsum.photos/id/201/200", callback=lambda x: print(x), )
+
+    def test_vl_model_2(self):
+        llm = LLM("gpt-4-turbo")
+        res = llm.chat_v("Please describe the picture in general. Thanks!",
+                         img_url="https://picsum.photos/id/201/400", callback=lambda x: print(x))
+        self.assertGreater(len(res), 0, msg=f"llm response if {res}")
+
 
 if __name__ == '__main__':
     unittest.main()

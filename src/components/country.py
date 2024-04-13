@@ -17,3 +17,6 @@ class CountryAgent(object):
                  stick: Stick
                  ) -> None:
         pass
+
+    def generate_action(self, prompt: str) -> list[Action]:
+        pass

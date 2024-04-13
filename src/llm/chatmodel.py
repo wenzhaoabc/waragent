@@ -75,7 +75,30 @@ class LLM(object):
         log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")
         return res
 
-    def chat_v(self, prompt: str, callback: callable, temperature: float = 0.2):
-        # self.client.chat.completions.
-        # TODO visual model support
-        pass
+    def chat_v(self, prompt: str, img_url: str, callback: callable = None, temperature: float = 0.2):
+        if self.model != "gpt-4-turbo":
+            raise ValueError(f"mode {self.model} doesn't support visual model")
+        response = self.client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": img_url}, }
+                    ],
+                }
+            ],
+            stream=True,
+            max_tokens=300,
+        )
+        res = ""
+        for chunk in response:
+            if chunk.choices[0].delta.content is not None:
+                content = chunk.choices[0].delta.content
+                if callback is not None:
+                    callback(content)
+                res += content
+
+        log.info(f"chat with [{self.model}]: messages:{prompt} ;image:{img_url} response:{res}")
+        return res
