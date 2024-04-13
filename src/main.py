@@ -1,11 +1,4 @@
-import logging
-from logging import getLogger
-
-logger = getLogger(__name__)
-
-logger.setLevel(logging.DEBUG)
-
-logger.info("Logger initialized")
+from utils import log
 
 if __name__ == '__main__':
-    logger.info("main function called")
+    log.info("main function called")

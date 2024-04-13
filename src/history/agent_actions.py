@@ -1,3 +1,5 @@
+from typing import Literal
+
 import pydantic
 
 
@@ -22,17 +24,20 @@ class Action(pydantic.BaseModel):
     public: bool
     """Whether the action is public or not"""
 
-    input: InteractionContent
-    """The input of the action"""
+    initiative: bool
+    """The action is initiative or not"""
 
-    output: InteractionContent
-    """The output of the action"""
+    require_response: bool
+    """The action requires response or not"""
+
+    input_type: Literal["list", "tuple"]
+    """The input type of the action. Example: list for [Country A, Country B]"""
 
 
 actions = [
     Action(
-        name="list_countries",
-        description="List all countries",
+        name="Wait without Action",
+        description="Wait without Action",
         public=True,
         input=InteractionContent(
             type="list_countries",

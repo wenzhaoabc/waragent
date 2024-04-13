@@ -7,15 +7,15 @@ from src.utils import log
 class LLM(object):
     def __init__(self,
                  model: str = "gpt-4",
-                 base_url: str = os.getenv("BASE_URL") or "https://api.llm.wenzhaoabc.com/v1",
-                 api_key: str = os.getenv("API_KEY") or "sk-1234",
+                 base_url: str = os.getenv("OPENAI_BASEURL"),
+                 api_key: str = os.getenv("OPENAI_API_KEY"),
                  temperature: float = 0.2,
                  ):
         self.model = model
         self.temperature = temperature
         if base_url is None or api_key is None:
-            log.error("Base URL or API_KEY must be set")
-            raise ValueError("Base URL or API_KEY is None")
+            log.error("Base URL or API KEY must be set")
+            raise ValueError("Base URL or API KEY is None")
         self.client = OpenAI(api_key=api_key, base_url=base_url)
 
     def chat(self, prompt: str, temperature: float = 0.2):
@@ -74,3 +74,8 @@ class LLM(object):
 
         log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")
         return res
+
+    def chat_v(self, prompt: str, callback: callable, temperature: float = 0.2):
+        # self.client.chat.completions.
+        # TODO visual model support
+        pass
