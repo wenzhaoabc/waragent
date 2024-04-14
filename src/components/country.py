@@ -16,7 +16,22 @@ class CountryAgent(object):
                  board: Board,
                  stick: Stick
                  ) -> None:
-        pass
+        self.identity = identity
+        self.profile = profile
+        self.actions = actions
+        self.secretary = secretary
+        self.llm = llm
+        self.board = board
+        self.stick = stick
 
     def generate_action(self, prompt: str) -> list[Action]:
+        """
+        LLM output
+        Action: <action_name>
+        Target: <target_country> split by ','
+        Input: <Action Input>
+
+        :param prompt:
+        :return:
+        """
         pass

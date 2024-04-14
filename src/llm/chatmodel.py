@@ -1,4 +1,7 @@
+import asyncio
 import os
+
+import requests
 from openai import OpenAI
 
 from src.utils import log
