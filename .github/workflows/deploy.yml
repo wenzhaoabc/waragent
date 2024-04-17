@@ -1,0 +1,48 @@
+name: Deploy to Production
+
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: 45 0 * * 1-5
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Echo Log
+        run: |
+          echo "Deploying to production"
+          echo "Deployed!"
+
+      - name: Notify
+        run: |
+          echo "Notifying the team"
+          echo "Notified!"
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@v5.0.3
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: ""
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "/home/wen/waragent"
+          SCRIPT_BEFORE: |
+            ls
+            whoami
+          SCRIPT_AFTER: |
+            ls
+            echo $RSYNC_STDOUT
