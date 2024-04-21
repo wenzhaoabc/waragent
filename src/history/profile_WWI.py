@@ -1,7 +1,11 @@
 from .profile import CountryProfile
 
-profiles = {
-    "Britain": CountryProfile(
+"""
+Countries in WWI
 
-    )
+
+"""
+
+profiles = {
+
 }

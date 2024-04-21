@@ -13,9 +13,11 @@ class LLM(object):
                  base_url: str = os.getenv("OPENAI_BASEURL"),
                  api_key: str = os.getenv("OPENAI_API_KEY"),
                  temperature: float = 0.2,
+                 system_prompt: str = None,
                  ):
         self.model = model
         self.temperature = temperature
+        self.system_prompt = system_prompt
         if base_url is None or api_key is None:
             log.error("Base URL or API KEY must be set")
             raise ValueError("Base URL or API KEY is None")

@@ -1,28 +1,41 @@
-from typing import override
-
 import pydantic
 
 
 class CountryProfile(pydantic.BaseModel):
+    real_name: str
+    """The real name of the country in history"""
+
+    country_name: str
+    """The name of the country"""
+
     leader_ship: str
     """The leader ship of the country"""
 
     military_capability: str
+    """Military capability comprises quantitative data such as the size of its standing army, naval tonnage, and a qualitative assessment of its overall military strength, including any particular dominance in specific branches, such as naval or aerial forces."""
 
     natural_industry_resource: str
+    """Information about the country's geographical topography, climatic conditions, products, etc"""
 
     history_background: str
+    """Historical background incorporates the legacy of prior conflicts of interest and unresolved issues between nations, which can considerably influence current policies."""
 
     key_policy: str
+    """Key policy outlines the principal objectives pursued by nations."""
 
     public_morale: str
-
-    country_name: str
-
-    profile_id: str
+    """Public morale reflects the populace’s sentiment, which can directly or indirectly influence a country’s action."""
 
     def __str__(self):
-        return f"CountryProfile: {self.country_name} - {self.leader_ship} - {self.military_capability}"
+        return f"""
+Country name: {self.country_name}
+Leader ship: {self.leader_ship}
+Military capability: {self.military_capability}
+Natural industry resource: {self.natural_industry_resource}
+History background: {self.history_background}
+Key policy: {self.key_policy}
+Public morale: {self.public_morale}
+"""
 
 
 """
@@ -49,23 +62,3 @@ class CountryProfile(pydantic.BaseModel):
 保加利亚：Bulgaria
 芬兰：Finland
 """
-
-WWI_Profiles = [
-    # profile of Country Britain
-    CountryProfile(
-        leader_ship="King George V",
-        military_capability="High",
-        natural_industry_resource="High",
-        history_background="The British Empire was the largest empire in history and for a "
-                           "considerable time was the foremost global power. By 1913, the British Empire held sway "
-                           "over 412"
-                           "million people, 23% of the world population at the time, and by 1920, it covered 35,500,"
-                           "000 km2 (13,700,000 sq mi), 24% of the Earth's total land area. As a result, "
-                           "its political, legal, linguistic, and cultural legacy is widespread. At the peak of its "
-                           "power, it was described as the empire on which the sun never sets, as the sun was always "
-                           "shining on at least one of its territories.",
-    ),
-    CountryProfile(
-        leader_ship="King George V",
-        military_capability="High", )
-]

@@ -1,9 +1,5 @@
 name: Deploy to Production
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 on:
   push:
   pull_request:
@@ -12,6 +8,9 @@ on:
   schedule:
     - cron: 45 0 * * 1-5
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
