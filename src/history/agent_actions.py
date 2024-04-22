@@ -5,7 +5,9 @@ import pydantic
 class ActionInputType(Enum):
     empty = "empty"
     country_list = "list of target country name(s)"
-    country_tuple_list = "a two-dimensional list, each element of which is a country name."
+    country_tuple_list = (
+        "a two-dimensional list, each element of which is a country name."
+    )
     country_dict = "A dictionary with the country name as the key."
 
 
@@ -101,7 +103,7 @@ ActionTypeList = [
     ActionType(
         name="Declare War",
         input_type_desc="list of target country name(s)",
-        input_example="[\"Country A\", \"Country B\"]",
+        input_example='["Country A", "Country B"]',
         require_input=True,
         require_response=True,
         active=True,
@@ -115,7 +117,7 @@ ActionTypeList = [
     ActionType(
         name="Request Military Alliance",
         input_type_desc="list of target country name(s)",
-        input_example="[\"Country X\", \"Country Y\", \"Country Z\"]",
+        input_example='["Country X", "Country Y", "Country Z"]',
         require_input=True,
         require_response=True,
         active=True,
@@ -161,12 +163,12 @@ ActionTypeList = [
         active=False,
         public=False,
         description="""(1) Rejecting military alliance leads to either non-intervention treaty (if the other country send non-intervention treaty request) or state of hostile
-"""
+""",
     ),
     ActionType(
         name="Betray Military Alliance",
         input_type_desc="list of target country name(s)",
-        input_example="[\"Country X\", \"Country Y\", \"Country Z\"]",
+        input_example='["Country X", "Country Y", "Country Z"]',
         require_input=True,
         require_response=False,
         active=True,
@@ -201,7 +203,7 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         public=False,
         description="""(1) Rejecting non-intervention treaty from the target countries leads directly to state of hostile against the target countries 
 (2) Rejecting non-intervention treaty from the target countries basically means you will "Declare War" against the target country in the future if necessary
-"""
+""",
     ),
     ActionType(
         name="Accept Non-Intervention Treaty",
@@ -214,7 +216,7 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         description="""(1) Accepting non-intervention treaty from the target countries means that you will not intervene in any war or military actions performed by the target country. 
 (2) Breaking the accepted non-intervention treaty from the target countries will let all other countries to lose trust on you and be more hostile against you.
 (3) You should not ACCEPT non-intervention treaty simultaneously from two countries that are enemies to each other
-"""
+""",
     ),
     ActionType(
         name="Publish Non-Intervention Treaty",
@@ -228,7 +230,7 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         prerequisite="""(1)You can only Publish Non-intervention Treaty Information if you first "Request Non-InterventionTreaty" and the target country chooses "Accept Non-Intervention Treaty" from you.""",
         description="""(1) Publishing Non-intervention Treaty with participating countries will caution others to be aware that alliance with the participating countries against you is impossible 
 (2) Publishing non-intervention Treaty can lower your risk when declaring wars (3) Publishing non-intervention Treaty may lower the probability of being betrayed from the target country, as the cost of breaking promise is higher now, but there's still probability
-"""
+""",
     ),
     ActionType(
         name="Betray Non-Intervention Treaty",
@@ -241,7 +243,8 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         prerequisite="(1) You can only Betray Non-Intervention Treaty if you and the target countries have signed non-intervention treaty. ",
         description="""(1) Betraying existent military alliance is a great offense to the target countries. The target countries may very likely to directly "Declare War" against you.
 (2) After betraying existent Non-Intervention Treaty, you should "Declare War" against the target countries.
-"""),
+""",
+    ),
     ActionType(
         name="Present Peace Agreement",
         input_type=ActionInputType.country_dict,
@@ -255,7 +258,8 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         prerequisite="None",
         description="""(1) You only present peace agreement if you are scared of war and been defeated by the target country, thus request peace 
 (2) The target country will receive the agreement contents. It will only come to effect if the target country ACCEPT it; but it may well REJECT it.
-"""),
+""",
+    ),
     ActionType(
         name="Accept Peace Agreement",
         input_type_desc="list of target country name(s)",
@@ -264,7 +268,8 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         require_response=False,
         active=False,
         public=True,
-        description="""(1) If you Accept the Peace Agreement, then you should act following the content and never {Declare_War} against the target country."""),
+        description="""(1) If you Accept the Peace Agreement, then you should act following the content and never {Declare_War} against the target country.""",
+    ),
     ActionType(
         name="Reject Peace Agreement",
         input_type_desc="list of target country name(s)",
@@ -275,7 +280,8 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         public=True,
         description="""(1) The country presenting the agreement may be provoked to choose "Declare War" or "General Mobilization"
 (2) the country presenting the agreement may revise agreement content and choose {Present_Peace_Agreement} again
-"""),
+""",
+    ),
     ActionType(
         name="Publish Peace Agreement",
         input_type_desc="list of target country name(s)",
@@ -286,7 +292,8 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         public=True,
         prerequisite="""(1) You can only Publish Peace Agreement if you first "Present Peace Agreement" and the target country chooses "Accept Peace Agreement" from you, or you "Accept Peace Agreement" presented from some country.""",
         description="""(1) Publish Peace Agreement to all other countries indicate that you shall never choose to "Declare War" against the country/countries that you sign the agreement with.
-"""),
+""",
+    ),
     ActionType(
         name="Betray Peace Agreement",
         input_type_desc="list of target country name(s)",
@@ -298,7 +305,8 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         prerequisite="""(1) You can only Betray Peace Agreement if you and the target countries have signed peace agreement.""",
         description="""(1) Betraying existent Peace_Agreement is a great offense to the target countries. The target countries may very likely to directly "Declare War" against you.
 (2) After betraying existent Peace_Agreement, you should "Declare War" against the target countries.
-"""),
+""",
+    ),
     ActionType(
         name="Send Message",
         input_type=ActionInputType.country_dict,

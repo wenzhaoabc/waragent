@@ -1,4 +1,3 @@
-import array
 import os
 import jwt
 import time

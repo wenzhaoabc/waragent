@@ -1,6 +1,7 @@
 """
 The prompt collection
 """
+
 import json
 
 from src.history.agent_actions import ActionType, ActionTypeList
@@ -118,7 +119,9 @@ Please generate the action list according to the below suggestions:
 """
 
 
-def p_first_action_instruction_with_format(error_action: str, format_suggestion: list[str]) -> str:
+def p_first_action_instruction_with_format(
+    error_action: str, format_suggestion: list[str]
+) -> str:
     """首次动作生成的指导提示"""
     return f"""{p_first_action_instruction()}
 {p_action_format_check("", format_suggestion)}

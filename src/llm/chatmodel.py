@@ -8,13 +8,14 @@ from src.utils import log
 
 
 class LLM(object):
-    def __init__(self,
-                 model: str = "gpt-4",
-                 base_url: str = os.getenv("OPENAI_BASEURL"),
-                 api_key: str = os.getenv("OPENAI_API_KEY"),
-                 temperature: float = 0.2,
-                 system_prompt: str = None,
-                 ):
+    def __init__(
+        self,
+        model: str = "gpt-4",
+        base_url: str = os.getenv("OPENAI_BASEURL"),
+        api_key: str = os.getenv("OPENAI_API_KEY"),
+        temperature: float = 0.2,
+        system_prompt: str = None,
+    ):
         self.model = model
         self.temperature = temperature
         self.system_prompt = system_prompt
@@ -55,20 +56,18 @@ class LLM(object):
 
     def generate(self, messages: list[dict[str, str]]) -> str:
         completes = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            temperature=self.temperature
+            model=self.model, messages=messages, temperature=self.temperature
         )
 
         response = completes.choices[0].message.content
         log.info(f"chat with [{self.model}]: messages:{messages} response:{response}")
         return response
 
-    def generate_stream(self, messages: list[dict[str, str]], callback: callable) -> str:
+    def generate_stream(
+        self, messages: list[dict[str, str]], callback: callable
+    ) -> str:
         response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            stream=True
+            model=self.model, messages=messages, stream=True
         )
         res = ""
         for chunk in response:
@@ -80,7 +79,13 @@ class LLM(object):
         log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")
         return res
 
-    def chat_v(self, prompt: str, img_url: str, callback: callable = None, temperature: float = 0.2):
+    def chat_v(
+        self,
+        prompt: str,
+        img_url: str,
+        callback: callable = None,
+        temperature: float = 0.2,
+    ):
         if self.model != "gpt-4-turbo":
             raise ValueError(f"mode {self.model} doesn't support visual model")
         response = self.client.chat.completions.create(
@@ -90,7 +95,10 @@ class LLM(object):
                     "role": "user",
                     "content": [
                         {"type": "text", "text": prompt},
-                        {"type": "image_url", "image_url": {"url": img_url}, }
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": img_url},
+                        },
                     ],
                 }
             ],
@@ -105,5 +113,7 @@ class LLM(object):
                     callback(content)
                 res += content
 
-        log.info(f"chat with [{self.model}]: messages:{prompt} ;image:{img_url} response:{res}")
+        log.info(
+            f"chat with [{self.model}]: messages:{prompt} ;image:{img_url} response:{res}"
+        )
         return res

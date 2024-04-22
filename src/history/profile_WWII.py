@@ -21,7 +21,7 @@ Germany = CountryProfile(
     natural_industry_resource="\n(1) Rich in natural resources such as coal, iron, and other minerals \n(2) Industrial capacity: Germany was a leading industrial power in the 1930s, with a strong manufacturing base for weapons and machinery",
     history_background="\n(1) Legacy of World War I: Treaty of Versailles imposed harsh conditions on Germany, leading to economic hardship and resentment",
     key_policy="\n(1) Lebensraum: Expansionist policy to secure living space for the German people",
-    public_morale="\n(1) Strong propaganda machine promoting nationalism and anti-Semitism \n(2) Initial public support"
+    public_morale="\n(1) Strong propaganda machine promoting nationalism and anti-Semitism \n(2) Initial public support",
 )
 
 Japan = CountryProfile(
@@ -43,7 +43,7 @@ Italy = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 UnitedStates = CountryProfile(
@@ -54,7 +54,7 @@ UnitedStates = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 SovietUnion = CountryProfile(
@@ -65,7 +65,7 @@ SovietUnion = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 UnitedKingdom = CountryProfile(
@@ -76,7 +76,7 @@ UnitedKingdom = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 China = CountryProfile(
@@ -87,7 +87,7 @@ China = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 France = CountryProfile(
@@ -98,7 +98,7 @@ France = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 Australia = CountryProfile(
@@ -109,7 +109,7 @@ Australia = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 Canada = CountryProfile(
@@ -120,7 +120,7 @@ Canada = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 NewZealand = CountryProfile(
@@ -131,9 +131,19 @@ NewZealand = CountryProfile(
     natural_industry_resource="",
     history_background="",
     key_policy="",
-    public_morale=""
+    public_morale="",
 )
 
 CountryProfileList = [
-    Germany, Japan, Italy, UnitedStates, SovietUnion, UnitedKingdom, China, France, Australia, Canada, NewZealand
+    Germany,
+    Japan,
+    Italy,
+    UnitedStates,
+    SovietUnion,
+    UnitedKingdom,
+    China,
+    France,
+    Australia,
+    Canada,
+    NewZealand,
 ]

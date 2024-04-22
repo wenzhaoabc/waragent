@@ -4,7 +4,11 @@ from json import JSONDecodeError
 
 from src.history.agent_actions import ActionType, Action
 from src.history.profile import CountryProfile
-from src.history.prompts import p_situation, p_first_action_instruction, p_first_action_instruction_with_format
+from src.history.prompts import (
+    p_situation,
+    p_first_action_instruction,
+    p_first_action_instruction_with_format,
+)
 from src.llm import LLM
 from src.utils import log
 from .board import Board
@@ -13,15 +17,16 @@ from .secretary import SecretaryAgent
 
 
 class CountryAgent(object):
-    def __init__(self,
-                 identity: str,
-                 profile: CountryProfile,
-                 action_types: list[ActionType],
-                 secretary: SecretaryAgent,
-                 llm: LLM,
-                 board: Board,
-                 stick: Stick
-                 ) -> None:
+    def __init__(
+        self,
+        identity: str,
+        profile: CountryProfile,
+        action_types: list[ActionType],
+        secretary: SecretaryAgent,
+        llm: LLM,
+        board: Board,
+        stick: Stick,
+    ) -> None:
         self.identity = identity
         self.profile = profile
         self.action_types = action_types
@@ -32,12 +37,14 @@ class CountryAgent(object):
         self.action_list = action_types
         self.actions_dict = {action.name: action for action in action_types}
 
-    def filter_actions(self, actions: dict) -> (list, bool):
+    def filter_actions(self, actions: dict) -> tuple[list, bool]:
         """根据动作列表过滤出符合基本格式要求的动作"""
         # action name list
         action_name_list = [str(n).strip() for n in actions.keys()]
         # 剔除不在动作列表中的动作
-        action_name_list = [n for n in action_name_list if n in self.actions_dict.keys()]
+        action_name_list = [
+            n for n in action_name_list if n in self.actions_dict.keys()
+        ]
         actions = {k: v for k, v in actions.items() if k in action_name_list}
         # 剔除包含空列表或为空的动作，即没有作用对象的动作
         # 对于input_type为empty的动作，v为{}, 需注意不可剔除
@@ -45,11 +52,15 @@ class CountryAgent(object):
 
         # 对需要content的动作特殊处理
         success_flag = True
-        contain_content_action_names = [a.name for a in self.action_list if a.require_content]
+        contain_content_action_names = [
+            a.name for a in self.action_list if a.require_content
+        ]
         for name in action_name_list:
             if name in contain_content_action_names:
-                if (isinstance(actions.get(name), dict) and
-                        all('content' in list(country.values())[0] for country in actions.get(name))):
+                if isinstance(actions.get(name), dict) and all(
+                    "content" in list(country.values())[0]
+                    for country in actions.get(name)
+                ):
                     success_flag = True
                 else:
                     success_flag = False
@@ -60,7 +71,9 @@ class CountryAgent(object):
         actions = {k: v for k, v in actions.items() if k in action_name_list}
         return actions, success_flag
 
-    def generate_action(self, prompt: str, round_time: int = 0) -> (list[Action], list[Action], str, str):
+    def generate_action(
+        self, prompt: str, round_time: int = 0
+    ) -> tuple[list[Action], list[Action], str, str]:
         """
         Generate action based on the prompt with LLM
 
@@ -85,14 +98,24 @@ class CountryAgent(object):
                 log.error(
                     f"Country {self.profile.country_name} occurs error in generating action. Try count: {try_count}"
                 )
-                log.info(f"generate plan error, return default action: {self.action_types[0].name}")
-                return ("There is nothing special I need to do",
-                        [Action(action_type=self.action_types[0], action_input="", properties={})])
+                log.info(
+                    f"generate plan error, return default action: {self.action_types[0].name}"
+                )
+                return (
+                    "There is nothing special I need to do",
+                    [
+                        Action(
+                            action_type=self.action_types[0],
+                            action_input="",
+                            properties={},
+                        )
+                    ],
+                )
 
             llm_res = self.llm.chat(prompt, temperature=0.2)
             try_count += 1
 
-            thought_process = llm_res.replace(r'(?s)```json.*?```', "")
+            thought_process = llm_res.replace(r"(?s)```json.*?```", "")
 
             res_regex = r"```json(.*?)```"
             res = re.findall(res_regex, llm_res, re.DOTALL)
@@ -116,28 +139,37 @@ class CountryAgent(object):
                 new_actions, success_flag = self.filter_actions(actions)
             else:
                 if "response_actions" in actions.keys():
-                    response_actions, success_flag = self.filter_actions(actions.get("response_actions"))
+                    response_actions, success_flag = self.filter_actions(
+                        actions.get("response_actions")
+                    )
                 if "new_actions" in actions.keys():
-                    new_actions, success_flag = self.filter_actions(actions.get("new_actions"))
+                    new_actions, success_flag = self.filter_actions(
+                        actions.get("new_actions")
+                    )
 
             if not success_flag:
                 continue
 
-            return [
-                Action(
-                    action_type=self.actions_dict.get(a),
-                    action_input=actions.get(a),
-                    properties={}
-                )
-                for a in new_actions.keys()
-            ], [
-                Action(
-                    action_type=self.actions_dict.get(a),
-                    action_input=actions.get(a),
-                    properties={}
-                )
-                for a in response_actions.keys()
-            ], thought_process, actions_str
+            return (
+                [
+                    Action(
+                        action_type=self.actions_dict.get(a),
+                        action_input=actions.get(a),
+                        properties={},
+                    )
+                    for a in new_actions.keys()
+                ],
+                [
+                    Action(
+                        action_type=self.actions_dict.get(a),
+                        action_input=actions.get(a),
+                        properties={},
+                    )
+                    for a in response_actions.keys()
+                ],
+                thought_process,
+                actions_str,
+            )
 
     def plan(self, initial_situation: str, current_situation: str) -> dict:
         plan_prompt = f"""
@@ -152,7 +184,9 @@ class CountryAgent(object):
         while not secretary_agree:
             thought_process, actions, _, actions_str = self.generate_action(plan_prompt)
             error_action_name_suggestions = self.secretary.check_action_name(actions)
-            error_action_input_suggestions = self.secretary.check_action_input(self.profile.country_name, actions)
+            error_action_input_suggestions = self.secretary.check_action_input(
+                self.profile.country_name, actions
+            )
 
             if error_action_name_suggestions or error_action_input_suggestions:
                 # action name or action input error, regenerate action with new prompt
@@ -161,5 +195,4 @@ class CountryAgent(object):
                 {p_first_action_instruction_with_format(actions_str, error_action_name_suggestions + error_action_input_suggestions)}"""
                 continue
 
-            
             pass

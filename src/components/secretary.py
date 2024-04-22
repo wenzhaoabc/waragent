@@ -9,9 +9,9 @@ class SecretaryAgent:
     """
 
     def __init__(
-            self,
-            country_profiles: list[CountryProfile],
-            action_types: list[ActionType],
+        self,
+        country_profiles: list[CountryProfile],
+        action_types: list[ActionType],
     ) -> None:
         self.country_profiles = country_profiles
         self.action_types = action_types
@@ -22,11 +22,14 @@ class SecretaryAgent:
         for action in actions:
             if action.name not in [a.name for a in self.action_types]:
                 suggestions.append(
-                    f"Invalid action name {action.action_type.name} Action {action.action_type.name} is not in the action list.")
+                    f"Invalid action name {action.action_type.name} Action {action.action_type.name} is not in the action list."
+                )
         log.info(f"Check action name suggestions: {suggestions}")
         return suggestions
 
-    def check_action_input(self, source_country: str, actions: list[Action]) -> list[str]:
+    def check_action_input(
+        self, source_country: str, actions: list[Action]
+    ) -> list[str]:
         """
         检查动作输入是否满足要求
 
