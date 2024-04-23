@@ -3,12 +3,17 @@ import pydantic
 
 
 class ActionInputType(Enum):
-    empty = "empty"
-    country_list = "list of target country name(s)"
-    country_tuple_list = (
-        "a two-dimensional list, each element of which is a country name."
-    )
-    country_dict = "A dictionary with the country name as the key."
+    empty = 1
+    """No input is required"""
+
+    country_list = 2
+    """list of target country name(s)"""
+
+    country_tuple_list = 3
+    """a two-dimensional list, each element of which is a country name."""
+
+    country_dict = 4
+    """A dictionary with the country name as the key."""
 
 
 class ActionType(pydantic.BaseModel):
@@ -130,9 +135,9 @@ ActionTypeList = [
     ),
     ActionType(
         name="Publish Military Alliance",
-        input_type=ActionInputType.country_tuple_list,
-        input_type_desc="A two-dimensional list of strings, where each sublist is the names of other countries in your military alliance.",
-        input_example="""[["Country P", "Country S"], ["Country M", "Country T", "Country U"]]""",
+        # input_type=ActionInputType.country_tuple_list,
+        input_type_desc="A list of country names, each country name is a country that has already allied with you.",
+        input_example="""["Country P", "Country S"]""",
         require_input=True,
         require_response=True,
         active=True,
@@ -220,9 +225,9 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
     ),
     ActionType(
         name="Publish Non-Intervention Treaty",
-        input_type=ActionInputType.country_tuple_list,
-        input_type_desc="A two-dimensional list of strings, where each sublist is the names of other countries in your non-intervention treaty group.",
-        input_example="""[["Country P"], ["Country M", "Country T", "Country U"]]""",
+        # input_type=ActionInputType.country_tuple_list,
+        input_type_desc="A list of country names, each of which has already signed a non-intervention treaty with you.",
+        input_example="""["Country M", "Country T", "Country U"]""",
         require_input=True,
         require_response=False,
         active=True,
@@ -284,7 +289,7 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
     ),
     ActionType(
         name="Publish Peace Agreement",
-        input_type_desc="list of target country name(s)",
+        input_type_desc="list of target country name(s) each of which has reached a peace agreement with you.",
         input_example="""["Country X", "Country Y", "Country Z"]""",
         require_input=True,
         require_response=False,

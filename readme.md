@@ -4,4 +4,15 @@
 
 ## 项目架构
 
-LLM
+ActionTypyList
+
+Empty Input:        Wait Without Action, General Mobilization, 
+Dict Input:         Present Peace Agreement, Send Message
+Country List Input: ...15 actions
+
+Board & Stick
+
+Board : Public global situation
+Stick : Single country situation
+
+

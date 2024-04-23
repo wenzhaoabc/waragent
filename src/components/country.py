@@ -14,6 +14,9 @@ from src.utils import log
 from .board import Board
 from .stick import Stick
 from .secretary import SecretaryAgent
+from .struct_format import Formatter
+
+formatter = Formatter(None)
 
 
 class CountryAgent(object):
@@ -102,7 +105,6 @@ class CountryAgent(object):
                     f"generate plan error, return default action: {self.action_types[0].name}"
                 )
                 return (
-                    "There is nothing special I need to do",
                     [
                         Action(
                             action_type=self.action_types[0],
@@ -110,6 +112,9 @@ class CountryAgent(object):
                             properties={},
                         )
                     ],
+                    [],
+                    "There is nothing special I need to do",
+                    "{}",
                 )
 
             llm_res = self.llm.chat(prompt, temperature=0.2)
@@ -195,4 +200,10 @@ class CountryAgent(object):
                 {p_first_action_instruction_with_format(actions_str, error_action_name_suggestions + error_action_input_suggestions)}"""
                 continue
 
+            # formatted messages {"source": str, "action": str, "target": str, "message": str}
+            formatted_messages = formatter.actions_format(self.profile, actions)
+            log.info(f"Country {self.profile.country_name} plan: {formatted_messages}")
+
+            # check with secretary, check actions logic
+            
             pass
