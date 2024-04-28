@@ -327,4 +327,6 @@ class CountryAgent(object):
         else:
             formatted_messages = self.later_plan(round_time, trigger, current_situation)
 
+        self.stick.update(formatted_messages)
+
         # interact with secretary

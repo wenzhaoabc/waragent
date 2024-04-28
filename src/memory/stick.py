@@ -2,8 +2,7 @@
 
 from src.agents.country import CountryProfile
 from src.memory.board import Board
-from src.memory.country_rel import CountryRel
-from src.profiles.agent_actions import Action
+from src.prompts.struct_format import NlAction
 
 
 class Stick:
@@ -15,26 +14,16 @@ class Stick:
         self.profile = country
         self.name = country.country_name
         self.countries_profile = countries
-        self.countries_name = [c.name for c in countries if c is not country]
 
         self.board = board
         self.mobilization = False
-        self.rels = {n: CountryRel.N for n in self.countries_name}
-
-    def get_rel(self, country: str) -> str:
-        """获取国家间关系"""
-        return self.rels[country]
-
-    def get_countries_with_rel(self, rel: CountryRel) -> list[str]:
-        """获取特定关系的国家"""
-        return [k for k, v in self.rels.items() if v == rel]
 
     def get_mob(self) -> bool:
         """获取动员状态"""
         return self.mobilization
 
-    def update(self, actions: list[Action]) -> None:
+    def update(self, actions: list[NlAction]) -> None:
         """更新信息库"""
         for action in actions:
-            self.rels[action.target] = action.rel
-        self.mobilization = any(action.name == "Mobilization" for action in actions)
+            if action.action == "General Mobilization":
+                self.mobilization = True
