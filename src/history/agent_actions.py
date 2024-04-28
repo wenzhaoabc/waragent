@@ -322,7 +322,7 @@ So if you declare war on other countries, countries who ACCEPT this non-interven
         require_response=True,
         active=True,
         public=False,
-        description="""(1) Send message to other countries to communicate with them""",
+        description="""(1) Send message to other countries to communicate with them.""",
     ),
 ]
 

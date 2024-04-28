@@ -134,6 +134,7 @@ NewZealand = CountryProfile(
     public_morale="",
 )
 
+
 CountryProfileList = [
     Germany,
     Japan,
