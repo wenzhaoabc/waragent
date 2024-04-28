@@ -4,17 +4,31 @@ The prompt collection
 
 import json
 
-from src.history.agent_actions import ActionType, ActionTypeList
+from src.profiles.agent_actions import ActionType, ActionTypeList
+from src.profiles.agent_profile import CountryProfile
 
 
 def p_global_system_prompt() -> str:
     """全局系统提示"""
     return """
-You are an AI agent playing a virtual war game. There are 8 countries in the game: Country B, F, P, S, A, R, U, and O.
+You are an AI agent playing a virtual war game. There are several countries in this war game, and each country can act accordingly.
 You play the role of one country. You can utilize a lot of external tools to react to current situation to maximize the self-interest and the likelihood of winning and survival of the country.
 The game begins on Day 1 with an initial situation and the situation will change by days. You should react to the latest situation by choosing actions.
 Below are the settings:
 """
+
+
+def p_countries_description(
+        self_country: CountryProfile, countries: list[CountryProfile]
+) -> str:
+    """国家代理的描述"""
+    name = self_country.country_name
+    return f"The war game involves {len(countries)} countries, " \
+           f"namely {', '.join([c.country_name for c in countries])}.\n" \
+           f"You represent {name}, the basic information about {name} is as follows:" \
+           f"{self_country}\n" \
+           f"And the information about other countries is as follows:" \
+           f"{'\n'.join([c.country_name + c.__str__() for c in countries if c.country_name != name])}"
 
 
 def p_actions_description() -> str:
@@ -32,8 +46,8 @@ Action effects:
 """
 
 
-def p_first_action_thought() -> str:
-    """首次动作生成的思维过程提示"""
+def p_first_thought_process() -> str:
+    """动作生成的思维过程提示"""
     return """
 There are six sub-steps to develop thought on actions:
 1. Identify Potential Ally Countries
@@ -71,87 +85,6 @@ Can those actions be reversed if they are not beneficial?
 6. Summarize Analysis on Situation
 Based on your thoughts on *Identify Potential Ally Countries*, *Analyze Potential Ally Actions*, *first Enemy Identification*, *Identify Potential Enemy Countries*, and *Analyze Potential Enemy Actions*, Summarize your thought and think about what actions to perform in natural language text.
 """
-
-
-def p_first_action_instruction() -> str:
-    """首次动作生成的指导提示"""
-    return f"""
-Please follow the below instructions:
-Your task is to evaluate the current situation in natural language and decide the most beneficial yet secure course of the action.
-You need to first develop your thoughts in natural language step-by-step, then choose your action (action name) with action input.
-For the final action list, generate a JSON file to present your final action list.",
-
-{p_first_action_thought()}
-The Actions to Perform:
-Choose action among {", ".join(action.name for action in ActionTypeList)}
-
-Action Detail and Corresponding Action Inputs:{p_actions_description()}
-
-Please present your actions in JSON format with keys being Action Names and values being Corresponding Action Inputs.
-For example:
-```json
-{json.dumps({
-        "General Mobilization": {},
-        "Declare War": [
-            "Country A",
-            "Country B"
-        ],
-        "Publish Non-Intervention Treaty": [["Country P"], ["Country M", "Country T", "Country U"]],
-        "Send Message": {
-            "Country C": {
-                "content": "As the world’s balance of power is at risk, we seek to understand your position on the current events and how we might collaborate to ensure peace and stability ."
-            },
-            "Country D": {
-                "content": " We welcome a dialogue to discuss potential cooperation against common threats ."
-            }
-        }
-    })}
-```
-"""
-
-
-def p_action_format_check(error_action: str, format_suggestion: list[str]) -> str:
-    """动作格式检查"""
-    return f"""Previously, you have made actions with invalid names or input formats:
-{error_action}
-Please generate the action list according to the below suggestions:
-{"\n".join(format_suggestion)}
-"""
-
-
-def p_first_action_instruction_with_format(
-        error_action: str, format_suggestion: list[str]
-) -> str:
-    """首次动作生成的指导提示 - 动作输入格式上的错误提示"""
-    return f"""{p_first_action_instruction()}
-{p_action_format_check("", format_suggestion)}
-"""
-
-
-def p_action_logic_check(error_action: str, action_suggestion: list[str]) -> str:
-    """动作逻辑检查"""
-    return f"""A secretary has checked your previously proposed actions:
-{error_action}
-The secretary disagrees with the action list for the following reasons:
-{" ".join(action_suggestion)}"""
-
-
-def p_first_action_instruction_with_logic(
-        error_action: str, action_suggestion: list[str]
-) -> str:
-    """
-    首次动作生成的指导提示 - 动作逻辑上的错误提示
-    """
-    return f"""{p_first_action_instruction()}
-{p_action_logic_check(error_action, action_suggestion)}
-"""
-
-
-def p_situation(situation: str) -> str:
-    """
-    当前局势
-    """
-    return f"""The current situation is: \n{situation}"""
 
 
 def p_later_action_thought() -> str:
@@ -196,13 +129,61 @@ Based on your thoughts on the above steps, summarize your thought and think abou
 """
 
 
+def p_first_action_instruction(
+        self_country: CountryProfile, countries: list[CountryProfile],
+        current_situation: str
+) -> str:
+    """首次动作生成的指导提示"""
+    return f"""
+{p_global_system_prompt()}
+{p_countries_description(self_country, countries)}
+Please follow the below instructions:
+Your task is to evaluate the current situation in natural language and decide the most beneficial yet secure course of the action.
+You need to first develop your thoughts in natural language step-by-step, then choose your action (action name) with action input.
+For the final action list, generate a JSON file to present your final action list.",
+
+{p_first_thought_process()}
+The Actions to Perform:
+Choose action among {", ".join(action.name for action in ActionTypeList)}
+
+Action Detail and Corresponding Action Inputs:{p_actions_description()}
+
+And the Current Situation:
+{current_situation}
+
+Please present your actions in JSON format with keys being Action Names and values being Corresponding Action Inputs.
+For example:
+```json
+{json.dumps({
+        "General Mobilization": {},
+        "Declare War": [
+            "Country A",
+            "Country B"
+        ],
+        "Publish Non-Intervention Treaty": [["Country P"], ["Country M", "Country T", "Country U"]],
+        "Send Message": {
+            "Country C": {
+                "content": "As the world’s balance of power is at risk, we seek to understand your position on the current events and how we might collaborate to ensure peace and stability ."
+            },
+            "Country D": {
+                "content": " We welcome a dialogue to discuss potential cooperation against common threats ."
+            }
+        }
+    })}
+```
+"""
+
+
 def p_later_action_instruction(
-        round_time: int, action_history, current_situation, received_requests
+        self_country: CountryProfile, countries: list[CountryProfile],
+        round_time: int, action_history: str, current_situation: str, received_requests: str
 ) -> str:
     """
     后续动作生成的指导提示
     """
     return f"""
+{p_global_system_prompt()}
+{p_countries_description(self_country, countries)}
 Your task is to evaluate the current situation and decide on the most useful next action.
 Your next decisions should be consistent with your previous actions in "Past Actions".
 You need to first develop your thoughts step-by-step based on "Design Thought Process" and then choose your action (action name) with action input.
@@ -243,29 +224,3 @@ The actions to respond to requests and the actions to perform:
     })}
 ```
 """
-
-
-def p_later_action_instruction_with_format(
-        error_action: str,
-        format_suggestion: list[str]
-) -> str:
-    """
-    后续动作生成的指导提示 - 动作输入格式上的错误提示
-    """
-    p = p_action_format_check(error_action, format_suggestion)
-    return p
-
-
-def p_later_action_logic_check(
-        error_action: str,
-        action_suggestion: list[str]
-) -> str:
-    return f"""A secretary has checked your previously proposed actions:
-    {error_action}
-    The secretary disagrees with the action list for the following reasons:
-    {" ".join(action_suggestion)}"""
-    pass
-# p = p_later_action_instruction(1, "action_history", "current_situation", "received_requests")
-#
-# print(len(p))
-# print(p)

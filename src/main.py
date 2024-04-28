@@ -1,7 +1,6 @@
 import argparse
 
-from src.components.board import Board
-from utils import log
+from src.memory.board import Board
 
 
 def create_parser():
@@ -24,19 +23,18 @@ def create_parser():
 def main():
     parser = create_parser()
     args = parser.parse_args()
-    from src.history.profile_WWII import CountryProfileList
-    from src.components.country import CountryAgent
-    from src.components.secretary import SecretaryAgent
-    from src.history.agent_actions import ActionTypeList
-    from src.components.stick import Stick
+    from src.profiles.profile_WWII import CountryProfileList
+    from src.agents.country import CountryAgent
+    from src.agents.secretary import SecretaryAgent
+    from src.profiles.agent_actions import ActionTypeList
+    from src.memory.stick import Stick
     from src.llm import LLM
 
     board = Board(CountryProfileList)
     countries = [
         CountryAgent(c, ActionTypeList, SecretaryAgent(c, CountryProfileList, ActionTypeList), LLM(), board, Stick())
-        for c
-        in
-        CountryProfileList]
+        for c in CountryProfileList
+    ]
 
 
 if __name__ == '__main__':

@@ -1,7 +1,5 @@
-import asyncio
 import os
 
-import requests
 from openai import OpenAI
 
 from src.utils import log
@@ -9,12 +7,12 @@ from src.utils import log
 
 class LLM(object):
     def __init__(
-        self,
-        model: str = "gpt-4",
-        base_url: str = os.getenv("OPENAI_BASEURL"),
-        api_key: str = os.getenv("OPENAI_API_KEY"),
-        temperature: float = 0.2,
-        system_prompt: str = None,
+            self,
+            model: str = "gpt-4-turbo",
+            base_url: str = os.getenv("OPENAI_BASEURL"),
+            api_key: str = os.getenv("OPENAI_API_KEY"),
+            temperature: float = 0.2,
+            system_prompt: str = None,
     ):
         self.model = model
         self.temperature = temperature
@@ -64,7 +62,7 @@ class LLM(object):
         return response
 
     def generate_stream(
-        self, messages: list[dict[str, str]], callback: callable
+            self, messages: list[dict[str, str]], callback: callable
     ) -> str:
         response = self.client.chat.completions.create(
             model=self.model, messages=messages, stream=True
@@ -80,11 +78,11 @@ class LLM(object):
         return res
 
     def chat_v(
-        self,
-        prompt: str,
-        img_url: str,
-        callback: callable = None,
-        temperature: float = 0.2,
+            self,
+            prompt: str,
+            img_url: str,
+            callback: callable = None,
+            temperature: float = 0.2,
     ):
         if self.model != "gpt-4-turbo":
             raise ValueError(f"mode {self.model} doesn't support visual model")
@@ -117,3 +115,11 @@ class LLM(object):
             f"chat with [{self.model}]: messages:{prompt} ;image:{img_url} response:{res}"
         )
         return res
+
+    def max_tokens(self, model_name: str) -> int:
+        model_max_tokens = {
+            "gpt-4-turbo": 128000,
+            "gpt-4": 8192,
+            "gpt-3.5-turbo-0125": 16385
+        }
+        return model_max_tokens[model_name]

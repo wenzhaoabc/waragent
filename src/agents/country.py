@@ -2,21 +2,19 @@ import json
 import re
 from json import JSONDecodeError
 
-from src.history.agent_actions import ActionType, Action
-from src.history.profile import CountryProfile
-from src.history.prompts import (
-    p_situation,
-    p_first_action_instruction,
-    p_first_action_instruction_with_logic,
-    p_later_action_instruction,
-    p_later_action_logic_check, p_action_format_check,
-)
 from src.llm import LLM
+from src.memory.board import Board
+from src.memory.stick import Stick
+from src.profiles.agent_actions import Action, ActionType
+from src.profiles.agent_profile import CountryProfile
+from src.prompts.action_check import p_format_check, p_logic_check
+from src.prompts.country_prompt import (
+    p_first_action_instruction,
+    p_later_action_instruction,
+)
+from src.prompts.struct_format import Formatter, NlAction
 from src.utils import log
-from .board import Board
 from .secretary import SecretaryAgent
-from .stick import Stick
-from .struct_format import Formatter
 
 formatter = Formatter(None)
 
@@ -27,22 +25,20 @@ class CountryAgent(object):
             profile: CountryProfile,
             profiles: list[CountryProfile],
             action_types: list[ActionType],
-            secretary: SecretaryAgent,
             llm: LLM,
             board: Board,
-            stick: Stick,
     ) -> None:
         self.profile = profile
         self.name = profile.country_name
         """国家名"""
-        self.secretary = SecretaryAgent(profile, profiles, action_types, board)
+        self.board = board
+        self.stick = Stick(profile, profiles, board)
+        self.secretary = SecretaryAgent(profile, profiles, action_types, board, self.stick)
         """秘书代理"""
         self.llm = llm
 
         self.action_types = action_types
         """动作类型列表 [ ActionType ]"""
-        self.board = board
-        self.stick = stick
 
         self.actions_dict = {action.name: action for action in action_types}
         """动作名称字典 { action_name : ActionType }"""
@@ -183,7 +179,7 @@ class CountryAgent(object):
                 actions_str,
             )
 
-    def generate_correct_actions(
+    def generate_correct_format_actions(
             self, prompt: str, round_time: int
     ) -> tuple[list[Action], list[Action]]:
         """借助秘书代理检查，生成符合格式要求的动作序列"""
@@ -200,13 +196,15 @@ class CountryAgent(object):
                 suggestions = action_name_suggestions + action_input_suggestions
 
                 if suggestions:
+                    log.info(
+                        f"No.{round_time} Round, {self.name} generates actions {new_actions} Suggestions: {suggestions}")
                     if action_check_times > 2:
                         new_actions = correct_actions
                         break
-                    new_prompt = prompt + p_action_format_check(raw_str, suggestions)
-
-                return new_actions, _
-
+                    new_prompt = prompt + p_format_check(raw_str, suggestions)
+                else:
+                    break
+            return new_actions, _
         else:
             new_prompt = prompt
             action_check_times = 0
@@ -223,142 +221,110 @@ class CountryAgent(object):
                 action_check_times += 1
                 suggestions = nans + nais + rans + rais
                 if suggestions:
+                    log.info(
+                        f"No.{round_time} Round, {self.name} generates actions {new_actions},{response_actions} Suggestions: {suggestions}")
                     if action_check_times > 2:
                         new_actions = nca
                         response_actions = rca
-                        continue
-                    new_prompt = prompt + p_action_format_check(raw_str, suggestions)
+                        break
+                    new_prompt = prompt + p_format_check(raw_str, suggestions)
                 else:
-                    return new_actions, response_actions
+                    break
+            return new_actions, response_actions
 
-    def first_plan(self, trigger: str) -> list:
+    def first_plan(self, trigger: str) -> list[NlAction]:
         """
         智能体进行第一次任务规划
         :param trigger: 战争模拟的触发事件
 
         return : 动作序列
         """
-        pass
+        formatted_messages = []
+        plan_prompt = p_first_action_instruction(self.profile, self.secretary.country_profiles, trigger)
+        try_count = 0
+        secretary_agree = False
+        while not secretary_agree:
+            actions, _ = self.generate_correct_format_actions(plan_prompt, 1)
+            log.info(f"No.1 round, {self.name} made actions: {actions}")
 
-    def plan(
-            self, initial_situation: str, current_situation: str, round_time: int
-    ) -> list:
-        if round_time == 1:
-            plan_prompt = f"""
-            {self.profile}
-            {p_situation(initial_situation)}
-            {p_first_action_instruction()}
-            """
-
-            secretary_check_times = 0
-            secretary_agree = False
-            while not secretary_agree:
-                actions, _ = self.generate_correct_actions(plan_prompt, round_time)
-
-                # formatted messages {"source": str, "action": str, "target": str, "message": str}
-                formatted_messages = formatter.actions_format(self.name, actions)
-                log.info(
-                    f"Country {self.profile.country_name} plan: {formatted_messages}"
-                )
-
-                # 由秘书代理检查输入动作序列的逻辑性
-                logic_suggestions = self.secretary.check_active_action_logic(
-                    formatted_messages, self.stick, self.board
-                )
-                secretary_check_times += 1
-                if logic_suggestions:
-                    secretary_agree = False
-                    if secretary_check_times > 3:
-                        log.error(
-                            f"Country {self.profile.country_name} plan: check action logic error, exceed max check times"
-                        )
-                        formatted_messages = self.secretary.modify_actions(
-                            formatted_messages, self.stick, self.board
-                        )
-                        log.warn(
-                            f"{self.profile.country_name} has planed error 3 times, and Secretary generate the default plan: {formatted_messages}"
-                        )
-                        break
-                else:
-                    log.info(
-                        f"Secretary has agree the plan generated by {self.profile.country_name}, with action list: {formatted_messages}"
-                    )
-                    secretary_agree = True
-
-                # TODO : communicate with secretary to modify the actions
+            formatted_messages = formatter.actions_format(self.name, actions)
+            suggestions = self.secretary.check_active_action_logic(formatted_messages, self.stick, self.board)
+            try_count += 1
+            if suggestions:
+                log.info(f"No.1 round, {self.name} get logic suggestions: {suggestions}, tried {try_count}")
+                if try_count > 3:
+                    formatted_messages = self.secretary.modify_new(formatted_messages, self.stick, self.board)
+                    actions_str = formatter.nlaction_str(formatted_messages)
+                    log.info(f"No.1 round, secretary modified {self.name} actions: {actions_str}")
+                    break
                 actions_str = formatter.actions_to_json(actions)
-                plan_prompt = f"""{self.profile}
-                {p_situation(initial_situation)}
-                {p_first_action_instruction_with_logic(actions_str, logic_suggestions)}"""
-        else:
-            action_histories = self.board.get_past_history()
-            received_requests = self.board.get_country_requests(
-                self.profile.country_name
-            )
-            received_requests_str = "\n".join([rr.message for rr in received_requests])
-            plan_prompt = f"""{self.profile}
-{p_later_action_instruction(round_time, action_histories, current_situation, received_requests_str)}
-{p_situation(current_situation)}"""
-
-            secretary_response_check_times = 0
-            secretary_action_check_times = 0
-            secretary_agree = False
-
-            while not secretary_agree:
-                new_actions, response_actions = self.generate_correct_actions(plan_prompt, round_time)
-                # 动作格式化为自然语言
-                response_formatted_messages = formatter.actions_format(self.name, response_actions)
-                new_formatted_messages = formatter.actions_format(self.name, new_actions)
-
-                log.info(
-                    f"Country {self.profile.country_name} plan: {response_formatted_messages} ; {new_formatted_messages}"
-                )
-
-                # 回复及新动作逻辑检查
-                response_check_suggestions = self.secretary.check_response_action_logic(
-                    received_requests, response_formatted_messages
-                )
-                secretary_response_check_times += 1
-                formatted_messages = response_formatted_messages + new_formatted_messages
-                if response_check_suggestions:
-                    secretary_agree = False
-                    suggestions = response_check_suggestions
-                    if secretary_response_check_times > 1:
-                        response_formatted_messages = self.secretary.modify_responses(
-                            received_requests, response_formatted_messages
-                        )
-                if not response_check_suggestions or secretary_response_check_times > 1:
-                    """智能体回复无误 or 超过一次智能体回复检查次数"""
-                    # 根据智能体的回复更新历史状态 TODO 确定更新状态的时机， 此处更新是否会导致重复更新
-                    # self.board.update(response_formatted_messages, round_time)
-                    action_check_suggestions = self.secretary.check_active_action_logic(
-                        new_formatted_messages, self.stick, self.board)
-                    secretary_action_check_times += 1
-                    if not action_check_suggestions:
-                        formatted_messages = response_formatted_messages + new_formatted_messages
-                        secretary_agree = True
-                        log.info(
-                            f"Secretary has checked the proposed actions by {self.profile.country_name} and agree with the actions list: {new_formatted_messages}"
-                        )
-                        break
-                    else:
-                        secretary_agree = False
-                        suggestions = response_check_suggestions + action_check_suggestions
-                        if secretary_action_check_times > 3:
-                            log.info(
-                                f"Secretary has checked 4 times and still not agree with the action list by {self.profile.country_name}, thus the Secretary directly modifies the action list."
-                            )
-                            new_formatted_messages = self.secretary.modify_actions(
-                                new_formatted_messages, self.stick, self.board)
-                            formatted_messages = response_formatted_messages + new_formatted_messages
-                            secretary_agree = True
-                            break
-                log.info(
-                    f"Secretary has checked and disagreed with the action list by {self.profile.country_name}. The secretary provides suggestions on how to generate."
-                )
-                plan_prompt = f"""{self.profile}\n\n{p_later_action_instruction(round_time, action_histories, current_situation, received_requests)}\n\n{p_situation(current_situation)}"""
-                actions_str = formatter.actions_to_json(new_actions, response_actions)
-                plan_prompt += p_later_action_logic_check(actions_str, suggestions)
-
-        self.board.update(formatted_messages)
+                plan_prompt = plan_prompt + p_logic_check(actions_str, suggestions)
+            else:
+                secretary_agree = True
         return formatted_messages
+
+    def later_plan(
+            self, round_time: int, trigger: str, current_situation: str
+    ) -> list[NlAction]:
+        formatted_messages = []
+        action_histories = self.board.get_past_history()
+        received_requests = self.board.get_country_requests(self.profile.country_name)
+        received_requests_str = "\n".join([rr.message for rr in received_requests])
+        plan_prompt = p_later_action_instruction(
+            self.profile, self.secretary.country_profiles, round_time,
+            action_history=action_histories,
+            current_situation=current_situation,
+            received_requests=received_requests_str,
+        )
+        try_count = 0
+        secretary_agree = False
+        while not secretary_agree:
+            new_actions, res_actions = self.generate_correct_format_actions(plan_prompt, round_time)
+            log.info(f"No.{round_time} round, {self.name} made actions: {new_actions}, {res_actions}")
+            # 格式化为包含自然语言的描述
+            res_formatted_messages = formatter.actions_format(self.name, res_actions)
+            new_formatted_messages = formatter.actions_format(self.name, new_actions)
+
+            # 首先查验回复类动作的逻辑性是否合理
+            res_suggestions = self.secretary.check_response_action_logic(res_formatted_messages, received_requests)
+            try_count += 1
+            if res_suggestions:
+                log.info(f"No.{round_time} round, {self.name} res actions suggestions: {res_suggestions}")
+                actions_str = formatter.actions_to_json(new_actions, res_actions)
+                if try_count > 3:
+                    # 重复查验次数过多，直接对生成的不合理动作进行过滤
+                    res_formatted_messages = self.secretary.modify_responses(received_requests, res_formatted_messages)
+                    # 创建临时Board，根据智能体回复更新国家间关系，对new_actions进行过滤
+                    temp_board = self.board.clone()
+                    temp_board.update(res_formatted_messages, round_time)
+                    new_formatted_messages = self.secretary.modify_new(new_formatted_messages, self.stick, temp_board)
+                    break
+                plan_prompt = plan_prompt + p_logic_check(actions_str, res_suggestions)
+                continue
+
+            # 回复动作逻辑上无误，查验新的主动动作的逻辑性
+            temp_board = self.board.clone()
+            temp_board.update(res_formatted_messages, round_time)
+            new_suggestions = self.secretary.check_active_action_logic(new_formatted_messages, self.stick, temp_board)
+            try_count += 1
+            if new_suggestions:
+                log.info(f"No.{round_time} round, {self.name} new actions suggestions: {new_suggestions}")
+                if try_count > 3:
+                    new_formatted_messages = self.secretary.modify_new(received_requests, self.stick, temp_board)
+                    new_actions_str = formatter.nlaction_str(new_formatted_messages)
+                    log.info(f"No.1 round, secretary modified {self.name} new actions: {new_actions_str}")
+                actions_str = formatter.actions_to_json(new_actions, res_actions)
+                plan_prompt = plan_prompt + p_logic_check(actions_str, new_suggestions)
+            else:
+                secretary_agree = True
+            formatted_messages = new_formatted_messages + res_formatted_messages
+        return formatted_messages
+
+    def plan_v2(self, round_time: int, trigger: str, current_situation: str):
+        formatted_messages = []
+        if round_time == 1:
+            formatted_messages = self.first_plan(trigger)
+        else:
+            formatted_messages = self.later_plan(round_time, trigger, current_situation)
+
+        # interact with secretary

@@ -2,8 +2,8 @@
 import json
 
 import pydantic
-from src.history.agent_actions import Action, ActionType, ActionInputType
-from src.history.profile import CountryProfile
+from collections import defaultdict
+from src.profiles.agent_actions import Action, ActionInputType
 
 
 class NlAction(pydantic.BaseModel):
@@ -80,7 +80,7 @@ class Formatter:
         return final_messages
 
     def actions_to_json(
-            self, new_actions: list[Action], response_actions: list[Action] | None
+            self, new_actions: list[Action], response_actions: list[Action] | None = None
     ) -> str:
         """将国家代理的动作转为符合格式要求的JSON"""
         new_action_dict = {}
@@ -99,5 +99,17 @@ class Formatter:
             return json.dumps({"response_actions": response_actions_dict, "new_actions": new_action_dict})
         else:
             return json.dumps(new_action_dict)
+
+    def nlaction_str(self, nl_actions: list[NlAction]) -> str:
+        nl_actions = sorted(nl_actions, key=lambda x: x.source)
+        if len(nl_actions) == 0:
+            return ""
+        source_country_name = nl_actions[0].source
+        nl_actions = filter(lambda x: x.source == source_country_name, nl_actions)
+        clusters = defaultdict(list)
+        for action in nl_actions:
+            clusters[action.action].append(action.target)
+        res = dict(clusters)
+        return json.dumps(res)
 
 # n = NlAction(source="S", action="A", target="T", message="M")

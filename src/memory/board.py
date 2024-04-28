@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from src.components.country import CountryProfile
-from src.components.enum import CountryRel
-from src.components.struct_format import NlAction
+from src.agents.country import CountryProfile
+from src.memory.country_rel import CountryRel
+from src.prompts.struct_format import NlAction
 
 
 class Board:
@@ -97,11 +97,16 @@ class Board:
         action_requests = []
         # 过滤出最近的请求
         for round_history in self.history[::-1]:
+            added = False
             for ac in round_history:
+                # TAG : 请求型动作
                 if ac.target == country and ("Request " in ac.action or "Send " in ac.action):
                     if ac.source in [ar.source for ar in action_requests]:
                         continue
                     action_requests.append(ac)
+                    added = True
+            if not added:
+                break
 
         return action_requests
 
@@ -192,3 +197,7 @@ class Board:
                         self.country_relations_private[source_country][target_country] = r
                         self.country_relations_private[target_country][source_country] = r
                         break
+
+    def clone(self) -> 'Board':
+        import copy
+        return copy.deepcopy(self)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from src.components.country import CountryProfile
-from src.components.board import Board
-from src.components.enum import CountryRel
-from src.history.agent_actions import Action
+from src.agents.country import CountryProfile
+from src.memory.board import Board
+from src.memory.country_rel import CountryRel
+from src.profiles.agent_actions import Action
 
 
 class Stick:

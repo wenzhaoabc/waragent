@@ -1,4 +1,4 @@
-from .profile import CountryProfile
+from .agent_profile import CountryProfile
 
 """
 Countries in WWI

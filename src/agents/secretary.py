@@ -1,12 +1,12 @@
 import random
 
 from src.utils import log
-from src.history.profile import CountryProfile
-from src.history.agent_actions import Action, ActionInputType, ActionType
-from src.components.board import Board
-from src.components.stick import Stick
-from src.components.struct_format import NlAction
-from src.components.enum import CountryRel
+from src.profiles.agent_profile import CountryProfile
+from src.profiles.agent_actions import Action, ActionInputType, ActionType
+from src.memory.board import Board
+from src.memory.stick import Stick
+from src.prompts.struct_format import NlAction
+from src.memory.country_rel import CountryRel
 
 
 class SecretaryAgent:
@@ -20,6 +20,7 @@ class SecretaryAgent:
             country_profiles: list[CountryProfile],
             action_types: list[ActionType],
             board: Board,
+            stick: Stick,
     ) -> None:
         self.country = country
         self.name = country.country_name
@@ -31,7 +32,7 @@ class SecretaryAgent:
 
         self.action_types = action_types
         self.board = board
-        self.stick = Stick(country, country_profiles, board)
+        self.stick = stick
 
     def check_action_name(self, actions: list[Action]) -> tuple[list[str], list[Action]]:
         """
@@ -228,11 +229,11 @@ class SecretaryAgent:
         suggestions = list(set(suggestions))
         return suggestions
 
-    def modify_actions(
+    def modify_new(
             self, activated: list[NlAction], stick: Stick, board: Board
     ) -> list[NlAction]:
         """
-        修正动作
+        修正智能体的主动动作
 
         Args:
             activated: 动作列表

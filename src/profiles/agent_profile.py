@@ -3,7 +3,7 @@ import pydantic
 
 class CountryProfile(pydantic.BaseModel):
     real_name: str
-    """The real name of the country in history"""
+    """The real name of the country in profiles"""
 
     country_name: str
     """The name of the country"""
