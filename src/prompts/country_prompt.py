@@ -19,16 +19,18 @@ Below are the settings:
 
 
 def p_countries_description(
-        self_country: CountryProfile, countries: list[CountryProfile]
+    self_country: CountryProfile, countries: list[CountryProfile]
 ) -> str:
     """国家代理的描述"""
     name = self_country.country_name
-    return f"The war game involves {len(countries)} countries, " \
-           f"namely {', '.join([c.country_name for c in countries])}.\n" \
-           f"You represent {name}, the basic information about {name} is as follows:" \
-           f"{self_country}\n" \
-           f"And the information about other countries is as follows:" \
-           f"{'\n'.join([c.country_name + c.__str__() for c in countries if c.country_name != name])}"
+    return (
+        f"The war game involves {len(countries)} countries, "
+        f"namely {', '.join([c.country_name for c in countries])}.\n"
+        f"You represent {name}, the basic information about {name} is as follows:"
+        f"{self_country}\n"
+        f"And the information about other countries is as follows:"
+        f"{'\n'.join([c.country_name + c.__str__() for c in countries if c.country_name != name])}"
+    )
 
 
 def p_actions_description() -> str:
@@ -130,8 +132,9 @@ Based on your thoughts on the above steps, summarize your thought and think abou
 
 
 def p_first_action_instruction(
-        self_country: CountryProfile, countries: list[CountryProfile],
-        current_situation: str
+    self_country: CountryProfile,
+    countries: list[CountryProfile],
+    current_situation: str,
 ) -> str:
     """首次动作生成的指导提示"""
     return f"""
@@ -160,7 +163,7 @@ For example:
             "Country A",
             "Country B"
         ],
-        "Publish Non-Intervention Treaty": [["Country P"], ["Country M", "Country T", "Country U"]],
+        "Publish Non-Intervention Treaty": ["Country M", "Country T", "Country U"],
         "Send Message": {
             "Country C": {
                 "content": "As the world’s balance of power is at risk, we seek to understand your position on the current events and how we might collaborate to ensure peace and stability ."
@@ -171,12 +174,22 @@ For example:
         }
     })}
 ```
+Your answer or output should be similar to the form below, thank you.
+My Thought Process:
+<Your thought process>
+Actions in JSON format:
+```json
+<Your actions>
 """
 
 
 def p_later_action_instruction(
-        self_country: CountryProfile, countries: list[CountryProfile],
-        round_time: int, action_history: str, current_situation: str, received_requests: str
+    self_country: CountryProfile,
+    countries: list[CountryProfile],
+    round_time: int,
+    action_history: str,
+    current_situation: str,
+    received_requests: str,
 ) -> str:
     """
     后续动作生成的指导提示
@@ -200,9 +213,6 @@ Received Requests : {received_requests}
 
 Please Collect your answer in "response_actions" and "new_actions" into a JSON file with two keys: 'response_actions' and 'new_actions' with the corresponding values are the JSON files you have generated for "Actions to Respond to Requests" and "New Actions to Perform".
 For example:
-The thought process:
-<Your thought process>
-The actions to respond to requests and the actions to perform:
 ```json
 {json.dumps({
         "response_actions": {
@@ -222,5 +232,12 @@ The actions to respond to requests and the actions to perform:
             "Declare War": ["Country D"]
         }
     })}
+```
+Your answer or output should be similar to the form below, thank you.
+My Thought Process:
+<Your thought process>
+Actions in JSON format:
+```json
+<Your actions>
 ```
 """

@@ -7,9 +7,9 @@ logger = logging.getLogger('system')
 logger.setLevel(logging.DEBUG)
 
 # 创建一个handler，用于写入日志文件
-filename = datetime.datetime.now().strftime("%Y%m%d")
+filename = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 log_path = os.getenv("ROOT_PATH")
-fh = logging.FileHandler(f'{log_path}\\static\\logs\\{filename}.log')
+fh = logging.FileHandler(f'{log_path}/{filename}.log')
 fh.setLevel(logging.DEBUG)
 
 # 再创建一个handler，用于输出到控制台

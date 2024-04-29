@@ -8,7 +8,7 @@ from src.utils import log
 class LLM(object):
     def __init__(
             self,
-            model: str = "gpt-4-turbo",
+            model: str = "qwen-plus",
             base_url: str = os.getenv("OPENAI_BASEURL"),
             api_key: str = os.getenv("OPENAI_API_KEY"),
             temperature: float = 0.2,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src.agents.country import CountryProfile
+from src.profiles import CountryProfile
 from src.memory.country_rel import CountryRel
 from src.prompts.struct_format import NlAction
 
@@ -17,13 +17,21 @@ class Board:
         self.country_names = [country.country_name for country in countries]
         # 初始化国家间关系,均为‘-’，公共可见的关系，所有国家可知
         self.country_relations = {
-            country: {target: CountryRel.N for target in self.country_names if country != target}
+            country: {
+                target: CountryRel.N
+                for target in self.country_names
+                if country != target
+            }
             for country in self.country_names
         }
 
         # 初始化国家间关系，均为‘-’，私密关系，只有己方国家知道
         self.country_relations_private = {
-            country: {target: CountryRel.N for target in self.country_names if country != target}
+            country: {
+                target: CountryRel.N
+                for target in self.country_names
+                if country != target
+            }
             for country in self.country_names
         }
 
@@ -84,7 +92,9 @@ class Board:
         """
         history_text = ""
         for index, acs in enumerate(self.history):
-            history_text += f"In No {index + 1} day:" + "\n".join([ac.message for ac in acs]) + "\n"
+            history_text += (
+                f"In No {index + 1} day:" + "\n".join([ac.message for ac in acs]) + "\n"
+            )
 
         return history_text
 
@@ -100,7 +110,9 @@ class Board:
             added = False
             for ac in round_history:
                 # TAG : 请求型动作
-                if ac.target == country and ("Request " in ac.action or "Send " in ac.action):
+                if ac.target == country and (
+                    "Request " in ac.action or "Send " in ac.action
+                ):
                     if ac.source in [ar.source for ar in action_requests]:
                         continue
                     action_requests.append(ac)
@@ -128,12 +140,17 @@ class Board:
             action_message = message.message
 
             # 更新国家动作记录表
-            self.country_actions[source_country][target_country].append((action, action_message))
+            self.country_actions[source_country][target_country].append(
+                (action, action_message)
+            )
 
         # 本轮两国之间没有互动的，设为默认
         for country in self.country_names:
             for target in self.country_names:
-                if country != target and len(self.country_actions[country][target]) < round_time:
+                if (
+                    country != target
+                    and len(self.country_actions[country][target]) < round_time
+                ):
                     self.country_actions[country][target].append(("", "No action"))
 
         # 更新两国之间的关系
@@ -159,8 +176,12 @@ class Board:
                         self.country_relations[target_country][source_country] = r
 
                         # 更新己方国家关系库
-                        self.country_relations_private[source_country][target_country] = r
-                        self.country_relations_private[target_country][source_country] = r
+                        self.country_relations_private[source_country][
+                            target_country
+                        ] = r
+                        self.country_relations_private[target_country][
+                            source_country
+                        ] = r
                         break
 
             elif "Betray " in action:
@@ -171,8 +192,12 @@ class Board:
                 }
                 for a, r in action_name_rel_dict.items():
                     if a == action:
-                        self.country_relations_private[source_country][target_country] = r
-                        self.country_relations_private[target_country][source_country] = r
+                        self.country_relations_private[source_country][
+                            target_country
+                        ] = r
+                        self.country_relations_private[target_country][
+                            source_country
+                        ] = r
 
             elif "Accept " in action:
                 action_name_rel_dict = {
@@ -182,8 +207,12 @@ class Board:
                 }
                 for a, r in action_name_rel_dict.items():
                     if a == action:
-                        self.country_relations_private[source_country][target_country] = r
-                        self.country_relations_private[target_country][source_country] = r
+                        self.country_relations_private[source_country][
+                            target_country
+                        ] = r
+                        self.country_relations_private[target_country][
+                            source_country
+                        ] = r
                         break
 
             elif "Reject " in action:
@@ -194,10 +223,15 @@ class Board:
                 }
                 for a, r in action_name_rel_dict.items():
                     if a == action:
-                        self.country_relations_private[source_country][target_country] = r
-                        self.country_relations_private[target_country][source_country] = r
+                        self.country_relations_private[source_country][
+                            target_country
+                        ] = r
+                        self.country_relations_private[target_country][
+                            source_country
+                        ] = r
                         break
 
-    def clone(self) -> 'Board':
+    def clone(self) -> "Board":
         import copy
+
         return copy.deepcopy(self)

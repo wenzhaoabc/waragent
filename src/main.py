@@ -5,7 +5,7 @@ from src.llm import LLM
 from src.memory.board import Board
 from src.profiles.agent_actions import ActionTypeList
 from src.profiles.profile_WWII import CountryProfileList
-
+from src.utils import log
 
 def main():
     board = Board(CountryProfileList)
@@ -18,8 +18,9 @@ def main():
         random.shuffle(countries)
         for country in countries:
             actions = country.plan_v2(i + 1, "", current_situation="")
+            log.info(f"{country.profile.country_name} actions: {actions}")
             board.update(actions, i + 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

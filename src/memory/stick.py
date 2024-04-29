@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src.agents.country import CountryProfile
+from src.profiles import CountryProfile
 from src.memory.board import Board
 from src.prompts.struct_format import NlAction
 

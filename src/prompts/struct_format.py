@@ -26,7 +26,7 @@ class Formatter:
         return self.data
 
     def actions_format(
-            self, source_country: str, actions: list[Action]
+        self, source_country: str, actions: list[Action]
     ) -> list[NlAction]:
         """
         格式化动作列表
@@ -80,7 +80,7 @@ class Formatter:
         return final_messages
 
     def actions_to_json(
-            self, new_actions: list[Action], response_actions: list[Action] | None = None
+        self, new_actions: list[Action], response_actions: list[Action] | None = None
     ) -> str:
         """将国家代理的动作转为符合格式要求的JSON"""
         new_action_dict = {}
@@ -96,7 +96,12 @@ class Formatter:
                 response_actions_dict[ra.action_type.name] = ra.action_input
 
         if response_actions_dict:
-            return json.dumps({"response_actions": response_actions_dict, "new_actions": new_action_dict})
+            return json.dumps(
+                {
+                    "response_actions": response_actions_dict,
+                    "new_actions": new_action_dict,
+                }
+            )
         else:
             return json.dumps(new_action_dict)
 
@@ -111,5 +116,6 @@ class Formatter:
             clusters[action.action].append(action.target)
         res = dict(clusters)
         return json.dumps(res)
+
 
 # n = NlAction(source="S", action="A", target="T", message="M")
