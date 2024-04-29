@@ -20,6 +20,7 @@ def main():
             actions = country.plan_v2(i + 1, "", current_situation="")
             log.info(f"{country.profile.country_name} actions: {actions}")
             board.update(actions, i + 1)
+            
 
 
 if __name__ == "__main__":
