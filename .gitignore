@@ -29,3 +29,7 @@ venv/
 .AppleDouble
 .LSOverride
 static/
+
+src/ui/assert/
+logs/
+src/ui/
