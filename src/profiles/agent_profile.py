@@ -29,12 +29,12 @@ class CountryProfile(pydantic.BaseModel):
     def __str__(self):
         return f"""
 Country name: {self.country_name}
-Leader ship: {self.leader_ship}
-Military capability: {self.military_capability}
-Natural industry resource: {self.natural_industry_resource}
-History background: {self.history_background}
-Key policy: {self.key_policy}
-Public morale: {self.public_morale}
+Leader ship: \n{self.leader_ship}
+Military capability: \n{self.military_capability}
+Natural industry resource: \n{self.natural_industry_resource}
+History background: \n{self.history_background}
+Key policy: \n{self.key_policy}
+Public morale: \n{self.public_morale}
 """
 
 

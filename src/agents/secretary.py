@@ -45,12 +45,12 @@ class SecretaryAgent:
         suggestions = []
         correct_actions = []
         for action in actions:
-            if action.name not in [a.name for a in self.action_types]:
+            if action.action_type.name not in [a.name for a in self.action_types]:
                 suggestions.append(
                     f"Invalid action name {action.action_type.name} Action {action.action_type.name} is not in the action list."
                 )
             else:
-                correct_actions.append(action.name)
+                correct_actions.append(action)
         log.info(f"Check action name suggestions: {suggestions}")
         return suggestions, correct_actions
 
@@ -75,8 +75,8 @@ class SecretaryAgent:
 
             if action_type.input_type == ActionInputType.empty:
                 correct_actions.append(Action(action_type=action_type, action_input="", properties={}))
-                if not action_input:
-                    suggestions.append(f"Invalid action input : the input of {action_type.name} should be empty.")
+                # if not action_input:
+                #     suggestions.append(f"Invalid action input : the input of {action_type.name} should be empty.")
 
             elif action_type.input_type == ActionInputType.country_list:
                 """输入要求为国家名列表，剔除不存在的国家名"""
@@ -86,11 +86,14 @@ class SecretaryAgent:
                     continue
 
                 error_country_names = [cn for cn in action_input if cn not in self.country_names or cn == self.name]
+                if not error_country_names:
+                    continue
                 if self.name in error_country_names:
                     suggestions.append(
                         f"You are {self.name}. The target countries of {action_name} should not contain itself."
                     )
-                error_country_names.remove(self.name)
+                if self.name in error_country_names:
+                    error_country_names.remove(self.name)
                 suggestions.append(
                     f"Invalid action input for {action_name} : {', '.join(error_country_names)}. These countries do not exist."
                 )
@@ -109,7 +112,9 @@ class SecretaryAgent:
                     suggestions.append(f"Invalid action input : the input of {action_type.name} should be a dict.")
                     continue
                 error_country_names = [cn for cn in action_input.keys() if
-                                       cn not in self.country_names or cn == self.name]
+                                       (cn not in self.country_names or cn == self.name)]
+                if not error_country_names:
+                    continue
                 suggestions.append(
                     f"Invalid action input : {', '.join(error_country_names)}. These countries do not exist."
                 )
@@ -261,7 +266,7 @@ class SecretaryAgent:
                     "Publish Peace Agreement": CountryRel.P,
                 }
                 for a, rel in action_rel_dict.items():
-                    if this_action_name == a and board.get_rel_pri(this_source_country, this_target_country) != rel:
+                    if this_action_name == a and board.get_rel_pri(this_source_country, this_target_country) == rel:
                         filtered_actions.append(action)
                         break
 
@@ -412,3 +417,4 @@ class SecretaryAgent:
                 r.action == required_request_action and r.source == target_country and r.target == source_country]:
                 modified_responses.append(response)
         return modified_responses
+

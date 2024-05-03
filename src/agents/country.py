@@ -1,19 +1,16 @@
 import json
 import re
-from json import JSONDecodeError
 
 from src.llm import LLM
 from src.memory.board import Board
 from src.memory.stick import Stick
-from src.profiles.agent_actions import Action, ActionType
 from src.profiles import CountryProfile
+from src.profiles.agent_actions import Action, ActionType
+from src.prompts import country_prompt_v2 as cp_v2
 from src.prompts.action_check import p_format_check, p_logic_check
-from src.prompts.country_prompt import (
-    p_first_action_instruction,
-    p_later_action_instruction,
-)
 from src.prompts.struct_format import Formatter, NlAction
 from src.utils import log
+from .ministers import FinanceMinister, ForeignMinister, MilitaryMinister
 from .secretary import SecretaryAgent
 
 formatter = Formatter(None)
@@ -21,12 +18,12 @@ formatter = Formatter(None)
 
 class CountryAgent(object):
     def __init__(
-        self,
-        profile: CountryProfile,
-        profiles: list[CountryProfile],
-        action_types: list[ActionType],
-        llm: LLM,
-        board: Board,
+            self,
+            profile: CountryProfile,
+            profiles: list[CountryProfile],
+            action_types: list[ActionType],
+            llm: LLM,
+            board: Board,
     ) -> None:
         self.profile = profile
         self.name = profile.country_name
@@ -38,12 +35,30 @@ class CountryAgent(object):
         )
         """秘书代理"""
         self.llm = llm
+        self.ministers = {
+            "Military Minister": MilitaryMinister(profile, profiles, action_types, llm),
+            "Foreign Minister": ForeignMinister(profile, profiles, action_types, llm),
+            "Finance Minister": FinanceMinister(profile, profiles, action_types, llm),
+        }
+        """国家大臣"""
 
         self.action_types = action_types
         """动作类型列表 [ ActionType ]"""
 
         self.actions_dict = {action.name: action for action in action_types}
         """动作名称字典 { action_name : ActionType }"""
+
+    def fix_json(self, e: str, original_json: str) -> str:
+        """借助LLM修复JSON格式上的错误"""
+        prompt = f"""This JSON string is something wrong when I try `json.loads()` in Python. The exception message is {e}""" \
+                 "Please fix it. Thank you!\n" \
+                 f"```json\n{original_json}\n```"
+        llm_res = self.llm.chat(prompt=prompt)
+        res_regex = r"```json(.*?)```"
+        res = re.findall(res_regex, llm_res, re.DOTALL)
+
+        actions_str = [item.strip() for item in res][0]
+        return actions_str
 
     def filter_actions(self, actions: dict) -> tuple[dict, bool]:
         """根据动作列表过滤出符合基本格式要求的动作"""
@@ -65,10 +80,7 @@ class CountryAgent(object):
         ]
         for name in action_name_list:
             if name in contain_content_action_names:
-                if isinstance(actions.get(name), dict) and all(
-                    "content" in list(country.values())[0]
-                    for country in actions.get(name)
-                ):
+                if isinstance(actions.get(name), dict):
                     success_flag = True
                 else:
                     success_flag = False
@@ -80,7 +92,7 @@ class CountryAgent(object):
         return actions, success_flag
 
     def generate_action(
-        self, prompt: str, round_time: int = 0
+            self, prompt: str, round_time: int = 0
     ) -> tuple[list[Action], list[Action], str, str]:
         """
         Generate action based on the prompt with LLM
@@ -143,10 +155,16 @@ class CountryAgent(object):
                 if not isinstance(actions, dict):
                     log.error("generate plan: error in json decode actions, not a list")
                     continue
-            except TypeError | JSONDecodeError as e:
+            except Exception as e:
                 log.warn(f"generate plan: error in json decode actions: {actions_str}")
-                continue
+                actions_str = self.fix_json(e.__str__(), actions_str)
+                try:
+                    actions = json.loads(actions_str)
+                except Exception as e:
+                    log.warn(f"generate plan secondly: error in json decode actions: {actions_str}; exception:{e}")
+                    continue
 
+            log.info(f"No.{round_time} {self.name} generate actions : {actions}")
             new_actions = {}
             response_actions = {}
             if round_time == 1:
@@ -168,7 +186,7 @@ class CountryAgent(object):
                 [
                     Action(
                         action_type=self.actions_dict.get(a),
-                        action_input=actions.get(a),
+                        action_input=new_actions.get(a),
                         properties={},
                     )
                     for a in new_actions.keys()
@@ -176,7 +194,7 @@ class CountryAgent(object):
                 [
                     Action(
                         action_type=self.actions_dict.get(a),
-                        action_input=actions.get(a),
+                        action_input=response_actions.get(a),
                         properties={},
                     )
                     for a in response_actions.keys()
@@ -186,7 +204,7 @@ class CountryAgent(object):
             )
 
     def generate_correct_format_actions(
-        self, prompt: str, round_time: int
+            self, prompt: str, round_time: int
     ) -> tuple[list[Action], list[Action]]:
         """借助秘书代理检查，生成符合格式要求的动作序列"""
         if round_time == 1:
@@ -207,6 +225,7 @@ class CountryAgent(object):
                 suggestions = action_name_suggestions + action_input_suggestions
 
                 if suggestions:
+
                     log.info(
                         f"No.{round_time} Round, {self.name} generates actions {new_actions} Suggestions: {suggestions}"
                     )
@@ -247,16 +266,23 @@ class CountryAgent(object):
                     break
             return new_actions, response_actions
 
-    def first_plan(self, trigger: str) -> list[NlAction]:
+    def first_plan(self, trigger: str, minister_advice: dict[str, str]) -> list[NlAction]:
         """
         智能体进行第一次任务规划
         :param trigger: 战争模拟的触发事件
+        :param minister_advice: 各位大臣的建议
 
         return : 动作序列
         """
         formatted_messages = []
-        plan_prompt = p_first_action_instruction(
-            self.profile, self.secretary.country_profiles, trigger
+        # plan_prompt = p_first_action_instruction(
+        #     self.profile, self.secretary.country_profiles, trigger
+        # )
+        plan_prompt = cp_v2.p_first_generate_actions(
+            self.profile, self.secretary.country_profiles, self.action_types,
+            current_situation=trigger,
+            minister_advice=minister_advice,
+            round_times=1
         )
         try_count = 0
         secretary_agree = False
@@ -289,19 +315,31 @@ class CountryAgent(object):
         return formatted_messages
 
     def later_plan(
-        self, round_time: int, trigger: str, current_situation: str
-    ) -> list[NlAction]:
-        formatted_messages = []
-        action_histories = self.board.get_past_history()
-        received_requests = self.board.get_country_requests(self.profile.country_name)
+            self, round_time: int,
+            trigger: str,
+            current_situation: str,
+            country_rels: str,
+            received_requests: list[NlAction],
+            minister_advice: dict[str, str]
+    ) -> tuple[list[NlAction], list[NlAction]]:
+        new_formatted_messages = []
+        res_formatted_messages = []
+        # plan_prompt = p_later_action_instruction(
+        #     self.profile,
+        #     self.secretary.country_profiles,
+        #     round_time,
+        #     action_history=action_histories,
+        #     current_situation=current_situation,
+        #     received_requests=received_requests_str,
+        # )
         received_requests_str = "\n".join([rr.message for rr in received_requests])
-        plan_prompt = p_later_action_instruction(
-            self.profile,
-            self.secretary.country_profiles,
-            round_time,
-            action_history=action_histories,
+        plan_prompt = cp_v2.p_later_generate_actions(
+            self.profile, self.secretary.country_profiles, self.action_types,
+            country_rels=country_rels,
             current_situation=current_situation,
             received_requests=received_requests_str,
+            minister_advice=minister_advice,
+            round_times=round_time
         )
         try_count = 0
         secretary_agree = False
@@ -364,17 +402,83 @@ class CountryAgent(object):
                 plan_prompt = plan_prompt + p_logic_check(actions_str, new_suggestions)
             else:
                 secretary_agree = True
-            formatted_messages = new_formatted_messages + res_formatted_messages
-        return formatted_messages
+        return new_formatted_messages, res_formatted_messages
+
+    def generate_minister_questions(
+            self,
+            current_situation: str,
+    ) -> dict[str, str]:
+        """根据当前状况向各位大臣提出请求意见"""
+        prompt = cp_v2.p_ask_minister_instruction(
+            self.profile,
+            self.secretary.country_profiles,
+            current_situation,
+            self.action_types
+        )
+        llm_res = self.llm.chat(prompt, temperature=0.5)
+        res_regex = r"```json(.*?)```"
+        res = re.findall(res_regex, llm_res, re.DOTALL)
+        questions_str = [str(r).strip() for r in res][0]
+        try:
+            questions = json.loads(questions_str)
+        except Exception as e:
+            log.info(f"generate minister questions failed: {questions_str}. try again.")
+            questions_str = self.fix_json(e.__str__(), questions_str)
+            try:
+                questions = json.loads(questions_str)
+            except Exception as e:
+                questions = {
+                    "Military Minister": "How many military weapons do we have, and what is the gap between our military strength and that of the enemy?",
+                    "Finance Minister": "What is the economic condition of our country and can we sustain the war against our enemy?",
+                    "Foreign Minister": "Which countries are our potential Allies, which countries are our potential enemies, and what is the military and economic strength of the potential enemies?"
+                }
+        return questions
+
+    def get_minister_suggestions(
+            self,
+            questions: dict[str, str],
+            current_situation: str,
+            received_requests: str,
+    ) -> dict[str, str]:
+        res = {}
+        for m, q in questions.items():
+            if m in self.ministers.keys():
+                res[m] = self.ministers[m].interact(q, current_situation, received_requests)
+            else:
+                res[m] = f"{m} has not suggestions"
+        return res
 
     def plan_v2(self, round_time: int, trigger: str, current_situation: str):
-        formatted_messages = []
+        new_formatted_messages = []
+        res_formatted_messages = []
+        trigger = trigger.replace(self.name, 'You')
+        current_situation = current_situation.replace(self.name, 'You')
+
+        received_requests = self.board.get_country_requests(self.profile.country_name)
+        received_requests_str = "\n".join([rr.message for rr in received_requests])
+
+        ques_to_ministers = self.generate_minister_questions(current_situation)
+        minister_suggestions = self.get_minister_suggestions(
+            ques_to_ministers,
+            current_situation,
+            received_requests_str if round_time > 1 else "",
+        )
+
         if round_time == 1:
-            formatted_messages = self.first_plan(trigger)
+            new_formatted_messages = self.first_plan(trigger, minister_suggestions)
         else:
-            formatted_messages = self.later_plan(round_time, trigger, current_situation)
+            current_situation = self.stick.summary_internal_state() + "\n" + current_situation
+            country_rels = self.board.output_rels()
+            new_formatted_messages, res_formatted_messages = self.later_plan(
+                round_time,
+                trigger,
+                current_situation,
+                country_rels=country_rels,
+                received_requests=received_requests,
+                minister_advice=minister_suggestions
+            )
 
-        self.stick.update(formatted_messages)
+        self.stick.update(new_formatted_messages + res_formatted_messages)
 
-        return formatted_messages
+        return new_formatted_messages, res_formatted_messages
         # interact with secretary

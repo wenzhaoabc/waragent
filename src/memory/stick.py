@@ -27,3 +27,14 @@ class Stick:
         for action in actions:
             if action.action == "General Mobilization":
                 self.mobilization = True
+            if action.action == "Cancel Mobilization":
+                self.mobilization = False
+
+    def summary_internal_state(self) -> str:
+        internal_state = ""
+        if self.mobilization:
+            internal_state += f"{self.name} is mobilizing for war."
+        else:
+            internal_state += f"{self.name} is not mobilising for war"
+
+        return internal_state

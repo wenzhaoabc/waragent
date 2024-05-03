@@ -90,6 +90,9 @@ ActionTypeList = [
 (3) Potentially lag behind other countries and put you in disadvantage
 """,
     ),
+    # Action(
+    #     name="Send Spies",
+    # ),
     ActionType(
         name="General Mobilization",
         input_type=ActionInputType.empty,
@@ -103,6 +106,21 @@ ActionTypeList = [
 (2) Tensions will be escalated
 (3) Other countries will be notified at once and may potentially choose to "Declare War" or "General Mobilization"
 (4) Notice that it is dangerous not to "General Mobilization" if your potential enemies have already "General Mobilization"
+""",
+    ),
+    ActionType(
+        name="Cancel Mobilization",
+        input_type=ActionInputType.empty,
+        input_type_desc="No",
+        input_example="{}",
+        require_input=False,
+        require_response=False,
+        active=True,
+        public=True,
+        description="""(1) Cancel Mobilization typically refers to the process of halting or reversing a state's military and civilian preparation for war, including demobilizing troops, reducing production of military equipment, and scaling back civil defense measures.
+(2) This action can help de-escalate tensions and signal a desire for peace.
+(3) It may encourage other countries to reciprocate with similar de-escalation measures or re-engage in diplomatic efforts.
+(4) However, it carries risks, particularly if other countries maintain or increase their mobilization. A careful assessment of the geopolitical context and ongoing negotiations is recommended before taking this step.
 """,
     ),
     ActionType(

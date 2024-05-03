@@ -23,4 +23,4 @@ ch.setFormatter(formatter)
 
 # 给logger添加handler
 logger.addHandler(fh)
-logger.addHandler(ch)
+# logger.addHandler(ch)

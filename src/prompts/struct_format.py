@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
+from json import JSONDecodeError
 
 import pydantic
 from collections import defaultdict
 from src.profiles.agent_actions import Action, ActionInputType
+from src.utils import log
 
 
 class NlAction(pydantic.BaseModel):
     source: str
     action: str
-    target: str
+    target: str | None
     message: str
 
 
@@ -26,7 +28,7 @@ class Formatter:
         return self.data
 
     def actions_format(
-        self, source_country: str, actions: list[Action]
+            self, source_country: str, actions: list[Action]
     ) -> list[NlAction]:
         """
         格式化动作列表
@@ -36,7 +38,7 @@ class Formatter:
         Returns:
             list[dict]: 格式化后的动作列表, {"source": str, "action": str, "target": str, "message": str}
         """
-        actions.sort(key=lambda x: x.action_type.input_type)
+        actions.sort(key=lambda x: x.action_type.input_type.value)
 
         final_messages = []
         source_country_name = source_country
@@ -69,6 +71,12 @@ class Formatter:
                 pass
             elif action_input_type == ActionInputType.country_dict:
                 for target, properties in action_input.items():
+                    if isinstance(properties, str):
+                        try:
+                            properties = json.loads(properties)
+                        except JSONDecodeError as e:
+                            properties = {"content": properties}
+                            log.info(f"JSON decoding error:{e} - properties = {properties}")
                     m = NlAction(
                         source=source_country_name,
                         action=action_name,
@@ -80,18 +88,18 @@ class Formatter:
         return final_messages
 
     def actions_to_json(
-        self, new_actions: list[Action], response_actions: list[Action] | None = None
+            self, new_actions: list[Action], response_actions: list[Action] | None = None
     ) -> str:
         """将国家代理的动作转为符合格式要求的JSON"""
         new_action_dict = {}
         if new_actions:
-            new_actions.sort(key=lambda x: x.action_type.input_type)
+            new_actions.sort(key=lambda x: x.action_type.input_type.value)
             for na in new_actions:
                 new_action_dict[na.action_type.name] = na.action_input
 
         response_actions_dict = {}
         if response_actions:
-            response_actions.sort(key=lambda x: x.action_type.input_type)
+            response_actions.sort(key=lambda x: x.action_type.input_type.value)
             for ra in response_actions:
                 response_actions_dict[ra.action_type.name] = ra.action_input
 
@@ -116,6 +124,5 @@ class Formatter:
             clusters[action.action].append(action.target)
         res = dict(clusters)
         return json.dumps(res)
-
 
 # n = NlAction(source="S", action="A", target="T", message="M")

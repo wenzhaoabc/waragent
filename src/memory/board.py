@@ -91,10 +91,12 @@ class Board:
         获取过去某一轮次的所有国家动作
         """
         history_text = ""
-        for index, acs in enumerate(self.history):
+        index = 0
+        for acs in self.history:
             history_text += (
-                f"In No {index + 1} day:" + "\n".join([ac.message for ac in acs]) + "\n"
+                    f"In No {index + 1} day:" + "\n".join([ac.message for ac in acs]) + "\n"
             )
+            index += 1
 
         return history_text
 
@@ -111,7 +113,7 @@ class Board:
             for ac in round_history:
                 # TAG : 请求型动作
                 if ac.target == country and (
-                    "Request " in ac.action or "Send " in ac.action
+                        "Request " in ac.action or "Send " in ac.action
                 ):
                     if ac.source in [ar.source for ar in action_requests]:
                         continue
@@ -121,6 +123,15 @@ class Board:
                 break
 
         return action_requests
+
+    def set_country_rel(
+            self, country_source: str, country_target: str, rel: CountryRel, public: bool = True
+    ) -> None:
+        if public:
+            self.country_relations[country_source][country_target] = rel
+            self.country_relations_private[country_source][country_target] = rel
+        self.country_relations[country_target][country_source] = rel
+        self.country_relations_private[country_target][country_source] = rel
 
     def update(self, messages: list[NlAction], round_time: int) -> None:
         """
@@ -139,6 +150,9 @@ class Board:
             action = message.action
             action_message = message.message
 
+            if not target_country:
+                continue
+
             # 更新国家动作记录表
             self.country_actions[source_country][target_country].append(
                 (action, action_message)
@@ -148,8 +162,8 @@ class Board:
         for country in self.country_names:
             for target in self.country_names:
                 if (
-                    country != target
-                    and len(self.country_actions[country][target]) < round_time
+                        country != target
+                        and len(self.country_actions[country][target]) < round_time
                 ):
                     self.country_actions[country][target].append(("", "No action"))
 
@@ -230,6 +244,85 @@ class Board:
                             source_country
                         ] = r
                         break
+
+    def get_countries_rel(
+            self, source_country: str, round_time: int
+    ) -> tuple[dict, dict]:
+        """
+        获取国际政治情形，获取处于结盟/不干预/和平协定的国家
+        :param source_country: 以该国家为视角总结国际关系
+        :param round_time: 当前模拟进行的轮次
+
+        :return: source_country的国家关系，其它国家的国家关系
+        """
+        # if round_time == 1:
+        #     return {}, {}
+        rels = [CountryRel.W, CountryRel.M, CountryRel.T, CountryRel.P]
+
+        other_countries_rels = {}
+        for source, rels in self.country_relations.items():
+            if source == source_country:
+                continue
+            for t, r in rels.items():
+                if r in rels:
+                    if source not in other_countries_rels.keys():
+                        other_countries_rels[source] = {}
+                    if r in other_countries_rels[source].keys():
+                        other_countries_rels[source][r].append(t)
+                    else:
+                        other_countries_rels[source][r] = [t]
+
+        self_countries_rels = {}
+
+        for t, r in self.country_relations_private[source_country].items():
+            if r in rels:
+                if r in self_countries_rels.keys():
+                    self_countries_rels[r].append(t)
+                else:
+                    self_countries_rels[r] = [t]
+
+        return self_countries_rels, other_countries_rels
+
+    def summary_countries_rel(
+            self, source_country: str, round_time: int
+    ) -> str:
+        """总结国际政治关系"""
+        self_countries_rels, other_countries_rels = self.get_countries_rel(source_country, round_time)
+        current_situation = "You have "
+        for r, countries in self_countries_rels.items():
+            if r == CountryRel.M:
+                current_situation += f"forged a military alliance with {' '.join(countries)}, "
+            elif r == CountryRel.T:
+                current_situation += f"forged a non-intervention treatment alliance with {' '.join(countries)}, "
+            elif r == CountryRel.P:
+                current_situation += f"forged a peace agreement alliance with {' '.join(countries)}, "
+            elif r == CountryRel.W:
+                current_situation += "and are at war with {' '.join(countries)}. "
+
+        nl_str = {
+            CountryRel.W: "at war",
+            CountryRel.M: "forged military alliance",
+            CountryRel.T: "forged non-intervention treaties",
+            CountryRel.P: "forged peace agreement",
+        }
+        for c, rels in other_countries_rels.items():
+            assert isinstance(c, str)
+            assert isinstance(rels, dict)
+            current_situation += f"\n{c} has {', '.join([nl_str.get(k) + ' with ' + v for k, v in rels.items()])}."
+
+        return current_situation
+
+    def output_rels(self) -> str:
+        res = ""
+        res += f"  {' '.join([n.split(' ')[1] for n in self.country_names])}\n"
+        i = 0
+        for c, rels in self.country_relations.items():
+            temp_arr = [r for t, r in rels.items()]
+            temp_arr.insert(i, '/')
+            res += f"{c.split(' ')[1]} {' '.join(temp_arr)}\n"
+            i += 1
+
+        return res
 
     def clone(self) -> "Board":
         import copy

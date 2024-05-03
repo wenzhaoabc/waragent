@@ -9,7 +9,7 @@ class LLM(object):
     def __init__(
             self,
             model: str = "qwen-plus",
-            base_url: str = os.getenv("OPENAI_BASEURL"),
+            base_url: str = os.getenv("OPENAI_BASE_URL"),
             api_key: str = os.getenv("OPENAI_API_KEY"),
             temperature: float = 0.2,
             system_prompt: str = None,
@@ -116,10 +116,22 @@ class LLM(object):
         )
         return res
 
+    def chat_with_tools(self, messages: list[dict[str, str]], tools: list):
+        res = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            stream=False,
+            temperature=self.temperature,
+            tools=tools,
+            tool_choice="auto"
+        )
+        return res.choices[0]
+
     def max_tokens(self, model_name: str) -> int:
         model_max_tokens = {
             "gpt-4-turbo": 128000,
             "gpt-4": 8192,
-            "gpt-3.5-turbo-0125": 16385
+            "gpt-3.5-turbo-0125": 16385,
+            "qwen-plus": 30000,
         }
         return model_max_tokens[model_name]
