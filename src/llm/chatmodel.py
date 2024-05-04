@@ -1,4 +1,5 @@
 import os
+import json
 
 from openai import OpenAI
 
@@ -32,7 +33,7 @@ class LLM(object):
             temperature=temperature or self.temperature,
         )
         response = completions.choices[0].message.content
-        log.info(f"chat with [{self.model}]: prompt:{prompt} response:{response}")
+        log.info(f"chat with [{self.model}]: prompt:{prompt} response:{completions.model_dump_json()}")
         return response
 
     def chat_stream(self, prompt: str, callback: callable, temperature: float = 0.2):
@@ -58,7 +59,7 @@ class LLM(object):
         )
 
         response = completes.choices[0].message.content
-        log.info(f"chat with [{self.model}]: messages:{messages} response:{response}")
+        log.info(f"chat with [{self.model}]: messages:{messages} response:{completes.model_dump_json()}")
         return response
 
     def generate_stream(
@@ -116,7 +117,7 @@ class LLM(object):
         )
         return res
 
-    def chat_with_tools(self, messages: list[dict[str, str]], tools: list):
+    def chat_with_tools(self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto"):
         res = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
@@ -125,8 +126,9 @@ class LLM(object):
             tools=tools,
             tool_choice="auto"
         )
-        log.info(f"chat with [{self.model}]: messages:{messages} response:{res.model_dump_json()}")
-        return res.choices[0]
+        res = res.model_dump_json()
+        log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")
+        return json.loads(res)["choices"][0]
 
     def max_tokens(self, model_name: str) -> int:
         model_max_tokens = {

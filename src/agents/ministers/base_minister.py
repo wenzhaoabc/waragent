@@ -23,7 +23,7 @@ class BaseMinister:
         self.action_types = action_types
         self.llm = llm
         self.tools = AllTools
-        self.anonymizer = Anonymize(llm)
+        self.anonymizer = Anonymize(llm, countries_profile)
 
     def get_role(self) -> str:
         pass
@@ -83,7 +83,7 @@ class BaseMinister:
     def llm_with_tools(self, messages: list[dict]) -> str:
         choice = self.llm.chat_with_tools(messages, self.tools)
         tool_call_result = []
-        if "tool_calls" not in choice["message"]:
+        if "tool_calls" not in choice["message"] or choice["message"]["tool_calls"] is None:
             return choice["message"]["content"]
         for tool in choice["message"]["tool_calls"]:
             tool_name = tool["function"]["name"]
@@ -99,12 +99,12 @@ class BaseMinister:
         messages = messages + tool_call_result
         # 带有工具调用输出的大模型回复
         choice_2 = self.llm.chat_with_tools(messages, self.tools)
-        return choice_2[0]["message"]["content"]
+        return choice_2["message"]["content"]
 
     def interact(self, question: str, current_situation: str, received_requests: str) -> str:
         # 反匿名化
         country_names = [c.country_name for c in self.countries_profile]
-        real_question = self.anonymizer.de_anonymize(country_names, question)
+        real_question = self.anonymizer.de_anonymize(question)
         system_prompt = self.get_system_prompt() + "\n\nCurrent Situation: " + current_situation
         if received_requests:
             system_prompt = system_prompt + "\nReceived Requests" + received_requests

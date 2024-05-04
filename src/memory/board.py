@@ -288,7 +288,7 @@ class Board:
     ) -> str:
         """总结国际政治关系"""
         self_countries_rels, other_countries_rels = self.get_countries_rel(source_country, round_time)
-        current_situation = "You have "
+        current_situation = ""
         for r, countries in self_countries_rels.items():
             if r == CountryRel.M:
                 current_situation += f"forged a military alliance with {' '.join(countries)}, "
@@ -310,6 +310,8 @@ class Board:
             assert isinstance(rels, dict)
             current_situation += f"\n{c} has {', '.join([nl_str.get(k) + ' with ' + v for k, v in rels.items()])}."
 
+        if current_situation:
+            return "You have " + current_situation
         return current_situation
 
     def output_rels(self) -> str:

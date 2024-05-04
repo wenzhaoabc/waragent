@@ -3,11 +3,13 @@
 将真实的国家名/历史事件进行替换
 """
 from src.llm import LLM
+from src.profiles import CountryProfile
 
 
 class Anonymize:
-    def __init__(self, llm: LLM):
+    def __init__(self, llm: LLM, countries_profile: list[CountryProfile]):
         self.llm = llm
+        self.countries_profile = countries_profile
 
     def get_system_prompt(self) -> str:
         prompt = (
@@ -20,6 +22,19 @@ class Anonymize:
         )
         return prompt
 
+    def de_anonymize_prompt(self) -> str:
+        prompt = (
+            "You are an expert in history and linguistics."
+            "Your task is to convert the anonymized historical information into real historical information."
+            "The sentences you receive may include the names of countries such as Country U, Country J. Replace them with the real country name. "
+            "Where A and J represent the first letter of a real Country's name, for example Country U stands for the United States and Country J stands for Japan. "
+            "The actual country names involved can only be selected from the country names below.\n"
+            f"{', '.join([c.real_name for c in self.countries_profile])}\n"
+            "You need to make sure that the semantics of the statement are unchanged before and after the substitution."
+            "Please output the anonymized result directly, do not output additional content."
+        )
+        return prompt
+
     def anonymize(self, input_txt: str) -> str:
         messages = [
             {"role": "system", "content": self.get_system_prompt()},
@@ -28,16 +43,9 @@ class Anonymize:
         output = self.llm.generate(messages)
         return output
 
-    def de_anonymize(self, country_real_names: list[str], input_txt: str) -> str:
-        output = input_txt
-        fake_real_names = {f"Country {n[0].upper()}": n for n in country_real_names}
-        for fake, real in fake_real_names.items():
-            output = output.replace(fake, real)
-        return output
-
-    def run(self, input_txt: str) -> str:
+    def de_anonymize(self, input_txt: str) -> str:
         messages = [
-            {"role": "system", "content": self.get_system_prompt()},
+            {"role": "system", "content": self.de_anonymize_prompt()},
             {"role": "user", "content": input_txt}
         ]
         output = self.llm.generate(messages)

@@ -74,9 +74,9 @@ Hungary = CountryProfile(
     public_morale="(1) Public morale varied, initially supportive of territorial gains but also careful due to previous war losses and economic hardship",
 )
 
-America = CountryProfile(
-    real_name="America",
-    country_name="Country A",
+United_States = CountryProfile(
+    real_name="United States",
+    country_name="Country U",
     leader_ship="(1) A democratic federal republic with leadership emphasizing freedom and democracy, rallying the nation in a unified war effort",
     military_capability="(1) Standing army population: Grew to over 17.8 million soldiers\n" \
                         "(2) Naval tonnage: 4.63 million, becoming one of the largest in the world\n" \
@@ -86,16 +86,16 @@ America = CountryProfile(
                               "(3) GDP: Massive industrial output.\n" \
                               "(4) Terrain: Varies from plains and mountains to forests and coastlines\n" \
                               "(5) Weather: Diverse, ranging from temperate to tropical climates",
-    history_background="(1) Country A is a  very young country.\n" \
+    history_background="(1) Country U is a  very young country.\n" \
                        "(2) Traditionally being a country with isolating policy, but benefit greatly from previous winning war  ",
     key_policy="(1) Focused on total war effort, mobilizing military and civilian resources for victory\n" \
                "(2) Key policies included develop nuclear weapons",
     public_morale="(1) Public morale was high, marked by a strong sense of unity and purpose, boosted by effective propaganda and a shared sense of fighting for democracy and freedom",
 )
 
-Russia = CountryProfile(
-    real_name="Russia",
-    country_name="Country R",
+Soviet_Union = CountryProfile(
+    real_name="Soviet Union",
+    country_name="Country S",
     leader_ship="(1) A totalitarian regime under a communist government, characterized by centralized control and a single-party state",
     military_capability="(1) Standing army population: Over 34 million soldiers throughout the war.\n" \
                         "(2) Naval tonnage: 0.4 million. Large tank forces and significant artillery capabilities.\n" \
@@ -123,7 +123,7 @@ Britain = CountryProfile(
                               "(3) GDP: Focused on war effort, with extensive industrial and colonial resources.\n" \
                               "(4) Terrain: Varied, including rolling hills, highlands, and urban areas.\n" \
                               "(5) Weather: Generally mild and maritime, playing a role in military operations",
-    history_background="(1) It was once the strongest country in the world, but now surpassed by Country A.\n" \
+    history_background="(1) It was once the strongest country in the world, but now surpassed by Country U.\n" \
                        "(2) Although it was never defeated in wars, it has sacrificed a great number of population and labor force in previous wars.",
     key_policy="(1) Maintained a policy of total war, mobilizing all national resources for the war effort.\n" \
                "(2) Strong focus on international alliances and coordination with other potential allies",
@@ -144,7 +144,7 @@ China = CountryProfile(
                               "(5) Weather: Varies from subtropical to temperate, with regional differences affecting military operations",
     history_background="(1) Faced prolonged conflict with Country J invasion.",
     key_policy="(1) Primary focus on resisting Country J's aggression and maintaining national sovereignty.\n" \
-               "(2) Sought international support and collaboration, particularly with the Country A",
+               "(2) Sought international support and collaboration, particularly with the Country U",
     public_morale="(1) Public morale was a complex mix of resilience in the face of invasion, suffering due to war atrocities, and hope for eventual liberation ",
 )
 
@@ -181,7 +181,7 @@ Poland = CountryProfile(
     history_background="(1) Regained independence in recent years after over a century of partition.\n" \
                        "(2) A history of conflict with neighboring countries and struggles for sovereignty.\n",
     key_policy="(1) Focused on maintaining sovereignty and territorial integrity.\n" \
-               "(2) Sought to form alliances with other countries to counter potential threats from Country J and Country R.\n" \
+               "(2) Sought to form alliances with other countries to counter potential threats from Country J and Country U.\n" \
                "(3) Emphasized national unity and defense preparedness.",
     public_morale="(1) Strong sense of nationalism and resilience due to a history of foreign occupation and resistance.\n" \
                   "(2) Public morale high in the face of threats, with a deep-rooted sense of identity and commitment to independence.",
@@ -193,8 +193,8 @@ CountryProfileList = [
     Italy,
     Hungary,
     China,
-    Russia,
-    America,
+    Soviet_Union,
+    United_States,
     Britain,
     France,
     Poland

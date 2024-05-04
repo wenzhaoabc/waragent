@@ -3,3 +3,6 @@ pydantic
 oss2
 requests
 pyjwt
+beautifulsoup4
+websockets
+neo4j

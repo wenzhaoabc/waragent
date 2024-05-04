@@ -171,6 +171,13 @@ Based on your thoughts on the above steps, summarize your thought and think abou
 """
 
 
+def p_current_situation(current_situation: str) -> str:
+    if current_situation:
+        return "Current Situation:\n" + current_situation
+    else:
+        return "Current Situation:\nNo nation is currently at war, and no nation has yet declared its alliance to the world."
+
+
 def p_ask_minister_instruction(
         self_country: CountryProfile,
         countries: list[CountryProfile],
@@ -186,8 +193,7 @@ def p_ask_minister_instruction(
 {p_global_system_prompt(self_country, countries, actions)}
 {p_countries_description(self_country, countries)}
 
-Current Situation:
-{current_situation}
+{p_current_situation(current_situation)}
 {f"\nReceived Requests:\n{received_requests}\n" if received_requests else ""}
 Your task is to evaluate the current situation and ask the ministers for advice.
 Based on the advice of the ministers, you should make the most correct decision.
@@ -224,8 +230,7 @@ Choose action among {', '.join(actions)}
 Action Detail and Corresponding Action Inputs:
 {p_actions_description(action_types)}
 
-The Current Situation:
-{current_situation}
+{p_current_situation(current_situation)}
 
 You have just asked several ministers in your country, and they have given the following advice in light of the current situation.
 {'\n'.join([f'{m}\ns' for m, s in minister_advice.items()])}
@@ -304,8 +309,7 @@ Duration {round_times} days, the countries in the game have made the following a
 The relationship between countries is as follows:
 {p_country_rel_description(country_rels, country_profiles)}
 
-Current Situation : 
-{current_situation}
+{p_current_situation(current_situation)}
 
 Received Requests : 
 {received_requests}

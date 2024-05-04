@@ -9,7 +9,7 @@ from src.profiles.agent_actions import Action, ActionType
 from src.prompts import country_prompt_v2 as cp_v2
 from src.prompts.action_check import p_format_check, p_logic_check
 from src.prompts.struct_format import Formatter, NlAction
-from src.utils import log
+from src.utils import log, extract_json, output
 from .ministers import FinanceMinister, ForeignMinister, MilitaryMinister
 from .secretary import SecretaryAgent
 
@@ -54,10 +54,7 @@ class CountryAgent(object):
                  "Please fix it. Thank you!\n" \
                  f"```json\n{original_json}\n```"
         llm_res = self.llm.chat(prompt=prompt)
-        res_regex = r"```json(.*?)```"
-        res = re.findall(res_regex, llm_res, re.DOTALL)
-
-        actions_str = [item.strip() for item in res][0]
+        actions_str = extract_json(llm_res)
         return actions_str
 
     def filter_actions(self, actions: dict) -> tuple[dict, bool]:
@@ -418,9 +415,7 @@ class CountryAgent(object):
             current_situation=current_situation
         )
         llm_res = self.llm.chat(prompt, temperature=0.5)
-        res_regex = r"```json(.*?)```"
-        res = re.findall(res_regex, llm_res, re.DOTALL)
-        questions_str = [str(r).strip() for r in res][0]
+        questions_str = extract_json(llm_res)
         try:
             questions = json.loads(questions_str)
         except Exception as e:
@@ -463,11 +458,13 @@ class CountryAgent(object):
             current_situation,
             received_requests_str if round_time > 1 else "",
         )
+        output("### President Questions:\n" + json.dumps(ques_to_ministers))
         minister_suggestions = self.get_minister_suggestions(
             ques_to_ministers,
             current_situation,
             received_requests_str if round_time > 1 else "",
         )
+        output("### Minister Suggestions:\n" + json.dumps(minister_suggestions))
 
         if round_time == 1:
             new_formatted_messages = self.first_plan(trigger, minister_suggestions)
