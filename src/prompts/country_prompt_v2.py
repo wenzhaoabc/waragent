@@ -174,8 +174,9 @@ Based on your thoughts on the above steps, summarize your thought and think abou
 def p_ask_minister_instruction(
         self_country: CountryProfile,
         countries: list[CountryProfile],
-        current_situation: str,
         action_types: list[ActionType],
+        current_situation: str,
+        received_requests: str,
 ) -> str:
     """
     向各位大臣询问当前情况下的建议
@@ -187,7 +188,7 @@ def p_ask_minister_instruction(
 
 Current Situation:
 {current_situation}
-
+{f"\nReceived Requests:\n{received_requests}\n" if received_requests else ""}
 Your task is to evaluate the current situation and ask the ministers for advice.
 Based on the advice of the ministers, you should make the most correct decision.
 

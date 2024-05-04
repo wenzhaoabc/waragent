@@ -407,13 +407,15 @@ class CountryAgent(object):
     def generate_minister_questions(
             self,
             current_situation: str,
+            received_requests: str,
     ) -> dict[str, str]:
         """根据当前状况向各位大臣提出请求意见"""
         prompt = cp_v2.p_ask_minister_instruction(
             self.profile,
             self.secretary.country_profiles,
-            current_situation,
-            self.action_types
+            action_types=self.action_types,
+            received_requests=received_requests,
+            current_situation=current_situation
         )
         llm_res = self.llm.chat(prompt, temperature=0.5)
         res_regex = r"```json(.*?)```"
@@ -457,7 +459,10 @@ class CountryAgent(object):
         received_requests = self.board.get_country_requests(self.profile.country_name)
         received_requests_str = "\n".join([rr.message for rr in received_requests])
 
-        ques_to_ministers = self.generate_minister_questions(current_situation)
+        ques_to_ministers = self.generate_minister_questions(
+            current_situation,
+            received_requests_str if round_time > 1 else "",
+        )
         minister_suggestions = self.get_minister_suggestions(
             ques_to_ministers,
             current_situation,

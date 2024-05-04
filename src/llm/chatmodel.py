@@ -125,6 +125,7 @@ class LLM(object):
             tools=tools,
             tool_choice="auto"
         )
+        log.info(f"chat with [{self.model}]: messages:{messages} response:{res.model_dump_json()}")
         return res.choices[0]
 
     def max_tokens(self, model_name: str) -> int:
