@@ -125,4 +125,32 @@ class Formatter:
         res = dict(clusters)
         return json.dumps(res)
 
+    def actions_to_nl(self, new_actions: list[NlAction], response_actions: list[NlAction] | None = None):
+        res = {}
+        for na in response_actions + new_actions:
+            s = na.source
+            t = na.target
+            a = na.action
+            m = na.message
+            if a not in res.keys():
+                if a == "Send Message":
+                    res[a] = [m.replace(s, "We")]
+                else:
+                    res[a] = [t]
+            else:
+                if a == "Send Message":
+                    res[a].append(m.replace(s, "We"))
+                else:
+                    res[a].append(t)
+
+        str_res = {}
+        for a, cs in res.items():
+            if a == "Send Message":
+                str_res[a] = " ".join(cs)
+            else:
+                ts = ''.join(cs)
+                str_res[a] = f"We will {a}{' to ' if len(ts) > 1 else ' '}{ts}."
+
+        return str_res
+
 # n = NlAction(source="S", action="A", target="T", message="M")

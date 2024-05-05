@@ -200,5 +200,7 @@ CountryProfileList = [
     Poland
 ]
 
+for c in CountryProfileList:
+    print(f'"{c.country_name}": "{c.real_name}"')
 # for country in CountryProfileList:
 #     print(country)
