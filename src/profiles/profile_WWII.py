@@ -201,6 +201,7 @@ CountryProfileList = [
 ]
 
 for c in CountryProfileList:
-    print(f'"{c.country_name}": "{c.real_name}"')
+    if c.country_name == "Country U":
+        print(c)
 # for country in CountryProfileList:
 #     print(country)

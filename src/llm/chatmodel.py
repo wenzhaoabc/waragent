@@ -2,6 +2,7 @@ import os
 import json
 
 from openai import OpenAI
+from typing import Literal
 
 from src.utils import log
 
@@ -72,7 +73,8 @@ class LLM(object):
         for chunk in response:
             if chunk.choices[0].delta.content is not None:
                 content = chunk.choices[0].delta.content
-                callback(content)
+                if callback is not None:
+                    callback(content)
                 res += content
 
         log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")
@@ -117,14 +119,17 @@ class LLM(object):
         )
         return res
 
-    def chat_with_tools(self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto"):
+    def chat_with_tools(
+            self, messages: list[dict[str, str]], tools: list,
+            tool_choices: str = "auto"
+    ):
         res = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
             stream=False,
             temperature=self.temperature,
             tools=tools,
-            tool_choice="auto"
+            tool_choice=tool_choices
         )
         res = res.model_dump_json()
         log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")
@@ -136,5 +141,6 @@ class LLM(object):
             "gpt-4": 8192,
             "gpt-3.5-turbo-0125": 16385,
             "qwen-plus": 30000,
+            "qwen-max": 6000,
         }
         return model_max_tokens[model_name]

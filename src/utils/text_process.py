@@ -23,4 +23,4 @@ text = """```json{
 }```
 """
 
-print(extract_json(text))
+# print(extract_json(text))

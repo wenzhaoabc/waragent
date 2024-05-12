@@ -6,3 +6,4 @@ pyjwt
 beautifulsoup4
 websockets
 neo4j
+dotenv

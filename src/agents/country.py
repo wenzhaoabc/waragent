@@ -9,7 +9,7 @@ from src.profiles.agent_actions import Action, ActionType
 from src.prompts import country_prompt_v2 as cp_v2
 from src.prompts.action_check import p_format_check, p_logic_check
 from src.prompts.struct_format import Formatter, NlAction
-from src.utils import log, extract_json, output, dump_json
+from src.utils import log, extract_json, output
 from .ministers import FinanceMinister, ForeignMinister, MilitaryMinister
 from .secretary import SecretaryAgent
 
@@ -24,6 +24,8 @@ class CountryAgent(object):
             action_types: list[ActionType],
             llm: LLM,
             board: Board,
+            tool_choices: str = "auto",
+            knowledge: str = "rag"
     ) -> None:
         self.profile = profile
         self.name = profile.country_name
@@ -36,9 +38,9 @@ class CountryAgent(object):
         """秘书代理"""
         self.llm = llm
         self.ministers = {
-            "Military Minister": MilitaryMinister(profile, profiles, action_types, llm),
-            "Foreign Minister": ForeignMinister(profile, profiles, action_types, llm),
-            "Finance Minister": FinanceMinister(profile, profiles, action_types, llm),
+            "Military Minister": MilitaryMinister(profile, profiles, action_types, llm, tool_choices, knowledge),
+            "Foreign Minister": ForeignMinister(profile, profiles, action_types, llm, tool_choices, knowledge),
+            "Finance Minister": FinanceMinister(profile, profiles, action_types, llm, tool_choices, knowledge),
         }
         """国家大臣"""
 
@@ -447,7 +449,7 @@ class CountryAgent(object):
                 res[m] = f"{m} has not suggestions"
         return res
 
-    def plan_v2(self, round_time: int, trigger: str, current_situation: str):
+    def plan_v2(self, round_time: int, trigger: str, current_situation: str, dump_json: callable):
         new_formatted_messages = []
         res_formatted_messages = []
         trigger = trigger.replace(self.name, 'You')

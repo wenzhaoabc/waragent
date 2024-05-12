@@ -15,7 +15,9 @@ class BaseMinister:
             country_profile: CountryProfile,
             countries_profile: list[CountryProfile],
             action_types: list[ActionType],
-            llm: LLM
+            llm: LLM,
+            tool_choices: str = "auto",
+            knowledge: str = "rag"
     ) -> None:
         self.country_profile = country_profile
         self.country_name = country_profile.country_name
@@ -23,6 +25,8 @@ class BaseMinister:
         self.action_types = action_types
         self.llm = llm
         self.tools = AllTools
+        self.tool_choices = tool_choices
+        self.knowledge = knowledge
         self.anonymizer = Anonymize(llm, countries_profile)
 
     def get_role(self) -> str:
@@ -76,12 +80,12 @@ class BaseMinister:
         if "question" in params_str:
             params["question"] = params_str["question"]
         # TODO 可更改知识库来源
-        params["knowledge_base"] = "rag"
+        params["knowledge_base"] = self.knowledge
         knowledge = r.run(**params)
         return knowledge
 
     def llm_with_tools(self, messages: list[dict]) -> str:
-        choice = self.llm.chat_with_tools(messages, self.tools)
+        choice = self.llm.chat_with_tools(messages, self.tools, self.tool_choices)
         tool_call_result = []
         if "tool_calls" not in choice["message"] or choice["message"]["tool_calls"] is None:
             return choice["message"]["content"]
@@ -98,7 +102,7 @@ class BaseMinister:
             # TODO 支持更多工具
         messages = messages + tool_call_result
         # 带有工具调用输出的大模型回复
-        choice_2 = self.llm.chat_with_tools(messages, self.tools)
+        choice_2 = self.llm.chat_with_tools(messages, self.tools, self.tool_choices)
         return choice_2["message"]["content"]
 
     def interact(self, question: str, current_situation: str, received_requests: str) -> str:

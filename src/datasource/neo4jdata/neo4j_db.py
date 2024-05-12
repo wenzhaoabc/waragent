@@ -41,9 +41,12 @@ def schema_text(node_props, rel_props, rels) -> str:
 
 
 class Neo4JDB:
-    def __init__(self, uri: str = "", auth: str = "") -> None:
-        self.uri = os.environ.get("NEO4J_URI")
-        self.auth = (os.environ.get("NEO4J_USER"), os.environ.get("NEO4J_PASSWD"))
+    def __init__(self, uri: str = None, username: str = None, password: str = None) -> None:
+        uri = uri if uri is not None else os.environ.get("NEO4J_URI")
+        username = username if username is not None else os.environ.get("NEO4J_USER")
+        password = password if password is not None else os.environ.get("NEO4J_PASSWD")
+        self.uri = uri
+        self.auth = (username, password)
         self.schema = ""
 
     def load_cypher(self, cypher: str) -> dict:

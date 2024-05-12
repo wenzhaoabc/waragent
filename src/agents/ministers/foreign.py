@@ -7,9 +7,12 @@ class ForeignMinister(BaseMinister):
     def __init__(
             self, country_profile: CountryProfile,
             countries_profile: list[CountryProfile],
-            action_types: list[ActionType], llm: LLM
+            action_types: list[ActionType],
+            llm: LLM,
+            tool_choices: str = "auto",
+            knowledge: str = "rag"
     ):
-        super().__init__(country_profile, countries_profile, action_types, llm)
+        super().__init__(country_profile, countries_profile, action_types, llm, tool_choices, knowledge)
 
     def get_role(self) -> str:
         return 'Foreign Minister'
