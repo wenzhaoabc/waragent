@@ -362,3 +362,6 @@ def t_generate_cypher_str():
 
     with open("../../database/action.cypher", "w") as f:
         f.write(cypher_str)
+
+
+print(len(ActionTypeList))

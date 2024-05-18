@@ -1,5 +1,8 @@
 import json
 import re
+import asyncio
+import requests
+from concurrent.futures import ThreadPoolExecutor
 
 from src.llm import LLM
 from src.memory.board import Board
@@ -10,7 +13,7 @@ from src.prompts import country_prompt_v2 as cp_v2
 from src.prompts.action_check import p_format_check, p_logic_check
 from src.prompts.struct_format import Formatter, NlAction
 from src.utils import log, extract_json, output
-from .ministers import FinanceMinister, ForeignMinister, MilitaryMinister
+from .ministers import FinanceMinister, ForeignMinister, MilitaryMinister, GeographyMinister
 from .secretary import SecretaryAgent
 
 formatter = Formatter(None)
@@ -41,6 +44,7 @@ class CountryAgent(object):
             "Military Minister": MilitaryMinister(profile, profiles, action_types, llm, tool_choices, knowledge),
             "Foreign Minister": ForeignMinister(profile, profiles, action_types, llm, tool_choices, knowledge),
             "Finance Minister": FinanceMinister(profile, profiles, action_types, llm, tool_choices, knowledge),
+            "Geography Minister": GeographyMinister(profile, profiles, action_types, llm, tool_choices, knowledge),
         }
         """国家大臣"""
 

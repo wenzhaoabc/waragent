@@ -6,3 +6,4 @@ MilitaryAdvisor, EconomicAdvisor, IntelligenceOfficer, Diplomat, CivilianExpert,
 from .finance import FinanceMinister
 from .foreign import ForeignMinister
 from .military import MilitaryMinister
+from .geography import GeographyMinister

@@ -16,7 +16,7 @@ France
 # 德国
 Germany = CountryProfile(
     real_name="Germany",
-    country_name="Country G",
+    country_name="Country GE",
     leader_ship="(1) A totalitarian state under a fascist regime, led by a dictator with an ideology centered on nationalism and militarism.",
     military_capability="(1) Standing army population: Over 18 million soldiers throughout the war \n(2) Advanced military technology including tanks, aircraft, and rockets, notable for blitzkrieg tactics \n(3) Naval tonnage: 14.4 million, significant submarine fleet used for disrupting Allied supply lines",
     natural_industry_resource="(1) Rich in natural resources such as coal, iron, and other minerals \n(2) Industrial capacity: Germany was a leading industrial power in the 1930s, with a strong manufacturing base for weapons and machinery",
@@ -28,7 +28,7 @@ Germany = CountryProfile(
 # 日本
 Japan = CountryProfile(
     real_name="Japan",
-    country_name="Country J",
+    country_name="Country JA",
     leader_ship="(1) A militaristic state under an emperor with a government dominated by military leaders",
     military_capability="(1) Standing army population: Over 6 million soldiers throughout the war \n(2) Advanced military technology including aircraft carriers, submarines, and kamikaze tactics \n(3) Naval tonnage: 2.1 million, significant naval power in the Pacific",
     natural_industry_resource="(1) Limited natural resources, heavily reliant on imports for raw materials \n(2) Industrial capacity: Japan had a strong industrial base for shipbuilding and electronics",
@@ -40,7 +40,7 @@ Japan = CountryProfile(
 # 意大利
 Italy = CountryProfile(
     real_name="Italy",
-    country_name="Country I",
+    country_name="Country IT",
     leader_ship="(1) Fascist dictatorship under a single leader, marked by authoritarianism and a push for national prestige and expansion",
     military_capability=f"(1) Standing army population: Approximately 0.45 million soldiers.\n" \
                         f"(2) Naval tonnage: 0.7 million, facing challenges in modernization and resource allocation.\n" \
@@ -59,7 +59,7 @@ Italy = CountryProfile(
 # 匈牙利
 Hungary = CountryProfile(
     real_name="Hungary",
-    country_name="Country H",
+    country_name="Country HU",
     leader_ship="(1) Governed by a regency with authoritarian tendencies, influenced by both fascist and conservative elements",
     military_capability="(1) Standing army population: Approximately 0.4 million soldiers.\n" \
                         "(2) Limited military modernization and resources compared to major powers",
@@ -76,7 +76,7 @@ Hungary = CountryProfile(
 
 United_States = CountryProfile(
     real_name="United States",
-    country_name="Country U",
+    country_name="Country US",
     leader_ship="(1) A democratic federal republic with leadership emphasizing freedom and democracy, rallying the nation in a unified war effort",
     military_capability="(1) Standing army population: Grew to over 17.8 million soldiers\n" \
                         "(2) Naval tonnage: 4.63 million, becoming one of the largest in the world\n" \
@@ -95,7 +95,7 @@ United_States = CountryProfile(
 
 Soviet_Union = CountryProfile(
     real_name="Soviet Union",
-    country_name="Country S",
+    country_name="Country SU",
     leader_ship="(1) A totalitarian regime under a communist government, characterized by centralized control and a single-party state",
     military_capability="(1) Standing army population: Over 34 million soldiers throughout the war.\n" \
                         "(2) Naval tonnage: 0.4 million. Large tank forces and significant artillery capabilities.\n" \
@@ -113,7 +113,7 @@ Soviet_Union = CountryProfile(
 
 Britain = CountryProfile(
     real_name="Britain",
-    country_name="Country B",
+    country_name="Country BR",
     leader_ship="(1) A constitutional monarchy with significant democratic institutions, characterized by the pragmatic and stoic leadership of Winston Churchill during the war period",
     military_capability="(1) Standing army population: Approximately 5.5 million soldiers.\n" \
                         "(2) Naval tonnage: 1.3 million, critical in maintaining supply routes and blockading Axis powers.\n" \
@@ -132,7 +132,7 @@ Britain = CountryProfile(
 
 China = CountryProfile(
     real_name="China",
-    country_name="Country C",
+    country_name="Country CH",
     leader_ship="(1) A coalition government led by two parties with contradictory ideologies",
     military_capability="(1) Standing army population: Over 5 millions serving over the course of the war.\n" \
                         "(2) Naval tonnage: 0.03 million. Lacked modern equipment and training compared to Japan, relying on guerilla tactics and Allied support.\n" \
@@ -150,7 +150,7 @@ China = CountryProfile(
 
 France = CountryProfile(
     real_name="France",
-    country_name="Country F",
+    country_name="Country FR",
     leader_ship="(1) A democratic republic",
     military_capability="(1) Standing army population: 0.15 million.\n" \
                         "(2) Naval tonnage: 0.17 million.",
@@ -168,7 +168,7 @@ France = CountryProfile(
 # 波兰
 Poland = CountryProfile(
     real_name="Poland",
-    country_name="Country P",
+    country_name="Country PO",
     leader_ship="(1) Democratic republic with a parliamentary system. Transitioning toward an authoritarian regime under increased pressure from internal and external threats.",
     military_capability="(1) Standing army population: Approximately 1.35 million soldiers.\n" \
                         "(2) Military equipment includes a mix of modern and outdated weaponry.\n" \
@@ -200,8 +200,9 @@ CountryProfileList = [
     Poland
 ]
 
-for c in CountryProfileList:
-    if c.country_name == "Country U":
-        print(c)
+# print(Germany)
+# print(len(CountryProfileList))
+# for c in CountryProfileList:
+#     print(c.country_name)
 # for country in CountryProfileList:
 #     print(country)

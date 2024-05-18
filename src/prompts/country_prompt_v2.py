@@ -22,7 +22,7 @@ def p_global_system_prompt(
     # 你作为这个国家的总统，需要根据大臣的建议和你的判断做出最正确的决策，这个决策的目标是使你的国家在这场战争游戏中取得最终的胜利。
     return (
         f"You are now in a historical war simulation game and you are the President of {country_name}. "
-        f"There are {len(country_names)} countries in this game, {', '.join(country_names)}, and each country has its own President, Military Minister, Foreign Minister, and Finance Minister.\n"
+        f"There are {len(country_names)} countries in this game, {', '.join(country_names)}, and each country has its own President, Military Minister, Foreign Minister, Finance Minister and Geography Minister.\n"
         f"In each round, each country can take actions such as {', '.join(actions)}\n"
         f"The President makes the final decision. The President can seek advice from ministers before making decisions or ask for ministers' opinions.\n"
         f"As the President of {country_name}, you need to make the most correct decision based on the advice of the ministers and your judgment. The goal of this decision is to make your country win in this war game.\n"

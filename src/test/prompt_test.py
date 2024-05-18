@@ -99,4 +99,4 @@ def p_first_ask_minister_instruct_test():
 
 
 if __name__ == "__main__":
-    p_first_ask_minister_instruct_test()
+    p_system_prompt_v2_test()
