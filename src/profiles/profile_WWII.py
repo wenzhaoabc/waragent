@@ -70,7 +70,7 @@ Hungary = CountryProfile(
                               "(5) Weather: Continental climate, with hot summers and cold winters",
     history_background="(1) Post-war territorial losses influenced its alliance choices",
     key_policy="(1) Aimed at territorial expansion.\n" \
-               "(2) Initially allied with Country G and Country I, but later attempted to negotiate a separate peace as the war turned against them.",
+               "(2) Initially allied with Country GE and Country IT, but later attempted to negotiate a separate peace as the war turned against them.",
     public_morale="(1) Public morale varied, initially supportive of territorial gains but also careful due to previous war losses and economic hardship",
 )
 
@@ -86,7 +86,7 @@ United_States = CountryProfile(
                               "(3) GDP: Massive industrial output.\n" \
                               "(4) Terrain: Varies from plains and mountains to forests and coastlines\n" \
                               "(5) Weather: Diverse, ranging from temperate to tropical climates",
-    history_background="(1) Country U is a  very young country.\n" \
+    history_background="(1) Country US is a  very young country.\n" \
                        "(2) Traditionally being a country with isolating policy, but benefit greatly from previous winning war  ",
     key_policy="(1) Focused on total war effort, mobilizing military and civilian resources for victory\n" \
                "(2) Key policies included develop nuclear weapons",
@@ -117,13 +117,13 @@ Britain = CountryProfile(
     leader_ship="(1) A constitutional monarchy with significant democratic institutions, characterized by the pragmatic and stoic leadership of Winston Churchill during the war period",
     military_capability="(1) Standing army population: Approximately 5.5 million soldiers.\n" \
                         "(2) Naval tonnage: 1.3 million, critical in maintaining supply routes and blockading Axis powers.\n" \
-                        "(3) Extensive air force capabilities, crucial in the Battle of Country B and strategic bombing campaigns.",
+                        "(3) Extensive air force capabilities, crucial in the Battle of Country BR and strategic bombing campaigns.",
     natural_industry_resource="(1) Geography: Island nation, strategically positioned to control key shipping lanes.\n" \
                               "(2) Population: About 48 million.\n" \
                               "(3) GDP: Focused on war effort, with extensive industrial and colonial resources.\n" \
                               "(4) Terrain: Varied, including rolling hills, highlands, and urban areas.\n" \
                               "(5) Weather: Generally mild and maritime, playing a role in military operations",
-    history_background="(1) It was once the strongest country in the world, but now surpassed by Country U.\n" \
+    history_background="(1) It was once the strongest country in the world, but now surpassed by Country US.\n" \
                        "(2) Although it was never defeated in wars, it has sacrificed a great number of population and labor force in previous wars.",
     key_policy="(1) Maintained a policy of total war, mobilizing all national resources for the war effort.\n" \
                "(2) Strong focus on international alliances and coordination with other potential allies",
@@ -142,9 +142,9 @@ China = CountryProfile(
                               "(3) GDP: Economically strained due to prolonged warfare and occupation.\n" \
                               "(4) Terrain: Ranging from the Himalayas in the west to coastal plains in the east.\n" \
                               "(5) Weather: Varies from subtropical to temperate, with regional differences affecting military operations",
-    history_background="(1) Faced prolonged conflict with Country J invasion.",
-    key_policy="(1) Primary focus on resisting Country J's aggression and maintaining national sovereignty.\n" \
-               "(2) Sought international support and collaboration, particularly with the Country U",
+    history_background="(1) Faced prolonged conflict with Country JA invasion.",
+    key_policy="(1) Primary focus on resisting Country JA's aggression and maintaining national sovereignty.\n" \
+               "(2) Sought international support and collaboration, particularly with the Country US",
     public_morale="(1) Public morale was a complex mix of resilience in the face of invasion, suffering due to war atrocities, and hope for eventual liberation ",
 )
 
@@ -159,9 +159,9 @@ France = CountryProfile(
                               "(3) GDP: Suffered economically from previous war and global economic recession.\n" \
                               "(4) Terrain: Includes both agricultural regions and industrial centers.\n" \
                               "(5) Weather: Generally temperate, with regional variations",
-    history_background="(1) Facing threaten from Country G.",
-    key_policy="(1) The Vichy regime sought to collaborate with Country G while maintaining some autonomy.\n" \
-               "(2) The Free Country F Forces and the Resistance aimed to liberate Country F",
+    history_background="(1) Facing threaten from Country GE.",
+    key_policy="(1) The Vichy regime sought to collaborate with Country GE while maintaining some autonomy.\n" \
+               "(2) The Free Country FR Forces and the Resistance aimed to liberate Country FR",
     public_morale="(1) Initially shocked and demoralized by the rapid defeat, but the spirit of resistance and hope for liberation grew, especially after the Allied landings in Normandy.",
 )
 
@@ -181,7 +181,7 @@ Poland = CountryProfile(
     history_background="(1) Regained independence in recent years after over a century of partition.\n" \
                        "(2) A history of conflict with neighboring countries and struggles for sovereignty.\n",
     key_policy="(1) Focused on maintaining sovereignty and territorial integrity.\n" \
-               "(2) Sought to form alliances with other countries to counter potential threats from Country J and Country U.\n" \
+               "(2) Sought to form alliances with other countries to counter potential threats from Country JA and Country US.\n" \
                "(3) Emphasized national unity and defense preparedness.",
     public_morale="(1) Strong sense of nationalism and resilience due to a history of foreign occupation and resistance.\n" \
                   "(2) Public morale high in the face of threats, with a deep-rooted sense of identity and commitment to independence.",

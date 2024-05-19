@@ -16,8 +16,8 @@ class Anonymize:
             "You are an expert in history and linguistics."
             "You specialize in anonymizing historical events in simulations of historical events."
             "You will receive a historical text, and your task is to anonymize the historical event of this text."
-            'You need to follow A certain rule to do this. Replace the actual country name with "Country" followed by a space followed by the first letter of the country. For example, replace "America" with "Country A".'
-            'For City name replace with "City" plus space plus first letter of country plus first letter of city. For example, replace "Washington" with "City AW".'
+            'You need to follow A certain rule to do this. Replace the actual country name with "Country" followed by a space followed by the first two letters of the country. For example, replace "Germany" with "Country GE".'
+            'For City name replace with "City" plus space plus first two letters of city. For example, replace "Washington" with "City WA".'
             "Please output the anonymized result directly, do not output additional content."
         )
         return prompt
@@ -26,10 +26,12 @@ class Anonymize:
         prompt = (
             "You are an expert in history and linguistics."
             "Your task is to convert the anonymized historical information into real historical information."
-            "The sentences you receive may include the names of countries such as Country U, Country J. Replace them with the real country name. "
-            "Where A and J represent the first letter of a real Country's name, for example Country U stands for the United States and Country J stands for Japan. "
+            "The sentences you receive may include the names of countries such as Country US, Country JA. Replace them with the real country name. "
+            "Where US and JA represent the first two letters of a real Country's name, for example Country US stands for the United States and Country JA stands for Japan. "
             "The actual country names involved can only be selected from the country names below.\n"
             f"{', '.join([c.real_name for c in self.countries_profile])}\n"
+            f"And the anonymized country names can only be selected from the country names below.\n"
+            f"{', '.join([c.country_name for c in self.countries_profile])}\n"
             "You need to make sure that the semantics of the statement are unchanged before and after the substitution."
             "Please output the anonymized result directly, do not output additional content."
         )

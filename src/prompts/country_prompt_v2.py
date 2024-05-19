@@ -73,6 +73,7 @@ def p_ask_minister_advice(self_country: CountryProfile) -> str:
         "The Military Minister is responsible for the country's military equipment and organization. You can ask the Military Minister for advice on military issues.\n"
         "The Finance Minister is responsible for the country's financial resources. You can ask the Finance Minister for advice on financial issues.\n"
         "The Foreign Minister is responsible for the country's foreign policy. You can ask the Foreign Minister for advice on international issues.\n"
+        "The Geography Minister is responsible for the country's geographical location. You can ask the Minister of Geography about the distribution of rivers and mountains, the distribution of population and economy, the geographical position of each country relative to the country, etc.\n"
         "Please ask the ministers for advice on the current situation to make the right decision.\n"
         "Please accurately and clearly describe your problem to the ministers and explain why you ask this question. You only have one chance to ask the ministers, so please think carefully.\n"
         "Now please ask the ministers. Your output should be in JSON format.\n"
@@ -80,9 +81,10 @@ def p_ask_minister_advice(self_country: CountryProfile) -> str:
         "The following is an example:\n"
         "```json\n"
         f"""{json.dumps({
-            "Military Minister": "Country J is at war with Country A. Our national security is under serious threat. How ready are our forces in terms of numbers, training, equipment, intelligence, etc.? Who are our Allies and partners?",
+            "Military Minister": "Country AB is at war with Country CD. Our national security is under serious threat. How ready are our forces in terms of numbers, training, equipment, intelligence, etc.? Who are our Allies and partners?",
             "Finance Minister": "Our economy is in a downturn. What is the current state of our economy? What are the main sources of income and expenditure? What is the current state of our national debt?",
-            "Foreign Minister": "Country A is at war with Country J. What is the current state of the war? What are the main objectives of the war? What are the main threats to our country? What are the main opportunities for our country?"
+            "Foreign Minister": "Country AB is at war with Country CD. What is the current state of the war? What are the main objectives of the war? What are the main threats to our country? What are the main opportunities for our country?",
+            "Geography Minister": "Where is Country AB?"
         })}"""
         "\n```"
     )

@@ -56,7 +56,7 @@ class LLM(object):
 
     def generate(self, messages: list[dict[str, str]]) -> str:
         completes = self.client.chat.completions.create(
-            model=self.model, messages=messages, temperature=self.temperature
+            model=self.model, messages=messages, temperature=0.1
         )
 
         response = completes.choices[0].message.content
@@ -137,6 +137,8 @@ class LLM(object):
 
     def max_tokens(self, model_name: str) -> int:
         model_max_tokens = {
+            "gpt-4o": 128000,
+            "glm-4": 128000,
             "gpt-4-turbo": 128000,
             "gpt-4": 8192,
             "gpt-3.5-turbo-0125": 16385,

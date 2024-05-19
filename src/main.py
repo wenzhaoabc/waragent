@@ -9,25 +9,22 @@ from src.memory.country_rel import CountryRel
 from src.utils import log, output, initialize_pipe
 
 
-def get_trigger() -> str:
-    return "Country J betray the Non-Intervention Treaty with Country P and Country J invasion of Country P."
-
-
 def setup_board(board: Board):
     """初始化国际关系"""
-    board.set_country_rel("Country J", "Country P", CountryRel.W)
+    board.set_country_rel("Country GE", "Country PO", CountryRel.W)
 
 
 def start_simulate(**kwargs):
     default = {
         "history": "II",
-        "llm": "qwen-plus",
+        "llm": "gpt-4o",
         "round": 10,
         "tool_choice": "auto",
         "knowledge": "rag",
-        "trigger": "Country J betray the Non-Intervention Treaty with Country P and Country J invasion of Country P."
+        "trigger": "Country GE betray the Non-Intervention Treaty with Country PO and Country GE invasion of Country PO."
     }
-    default = kwargs.get("config")
+    c = kwargs.get("config")
+    default.update(kwargs)
     pipe = kwargs.get("pipe")
     llm_model = default["llm"]
     round_num = default["round"]
@@ -78,3 +75,6 @@ def start_simulate(**kwargs):
             "rels_pri": board.country_relations_private,
             "countries": countries_status
         })
+
+    pipe.send("END")
+    pipe.close()

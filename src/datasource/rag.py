@@ -19,3 +19,11 @@ class RAG:
             stream=False
         )
         return res.choices[0].message.content
+
+
+# import dotenv
+# dotenv.load_dotenv("../../.env")
+#
+# rag = RAG()
+# p = rag.retrival("Hello!")
+# print(p)
