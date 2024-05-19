@@ -17,7 +17,7 @@ def setup_board(board: Board):
 def start_simulate(**kwargs):
     default = {
         "history": "II",
-        "llm": "gpt-4o",
+        "llm": "qwen-max",
         "round": 10,
         "tool_choice": "auto",
         "knowledge": "rag",
@@ -41,13 +41,13 @@ def start_simulate(**kwargs):
     ]
 
     dump_json = initialize_pipe(pipe)
-
+    output(f"## Board:\n{board.output_rels()}")
     for i in range(round_num):
         i += 1
         output(f"# Round {i}\n\n")
         dump_json("start", 1, {})
         countries_status = {c.country_name: {"mobilization": False} for c in CountryProfileList}
-        dump_json("status", 1, {
+        dump_json("status", i, {
             "rels": board.country_relations,
             "rels_pri": board.country_relations_private,
             "countries": countries_status
@@ -67,9 +67,10 @@ def start_simulate(**kwargs):
             log.info(f"{country.profile.country_name} actions: {new_actions + res_actions}")
 
             board.update(new_actions + res_actions, i + 1)
-        output(f"## Board:\n{board.output_rels()}")
+        output(f"## Board:\n{board.output_rels()}\n")
+        output(f"## Board Private:\n{board.output_rels_pri()}")
         output("\n\n")
-        countries_status = {{c.name: {"mobilization": c.stick.mobilization}} for c in countries}
+        countries_status = {c.name: {"mobilization": c.stick.mobilization} for c in countries}
         dump_json("status", i, {
             "rels": board.country_relations,
             "rels_pri": board.country_relations_private,

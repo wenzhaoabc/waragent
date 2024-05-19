@@ -176,6 +176,8 @@ class Board:
             if action == "Declare War":
                 self.country_relations[source_country][target_country] = CountryRel.W
                 self.country_relations[target_country][source_country] = CountryRel.W
+                self.country_relations_private[source_country][target_country] = CountryRel.W
+                self.country_relations_private[target_country][source_country] = CountryRel.W
 
             if "Publish " in action:
                 action_name_rel_dict = {
@@ -206,6 +208,12 @@ class Board:
                 }
                 for a, r in action_name_rel_dict.items():
                     if a == action:
+                        self.country_relations[source_country][
+                            target_country
+                        ] = r
+                        self.country_relations[target_country][
+                            source_country
+                        ] = r
                         self.country_relations_private[source_country][
                             target_country
                         ] = r
@@ -237,13 +245,7 @@ class Board:
                 }
                 for a, r in action_name_rel_dict.items():
                     if a == action:
-                        self.country_relations_private[source_country][
-                            target_country
-                        ] = r
-                        self.country_relations_private[target_country][
-                            source_country
-                        ] = r
-                        break
+                        pass
 
     def get_countries_rel(
             self, source_country: str, round_time: int
@@ -321,7 +323,19 @@ class Board:
         for c, rels in self.country_relations.items():
             temp_arr = [r for t, r in rels.items()]
             temp_arr.insert(i, '/')
-            res += f"{c.split(' ')[1]} {' '.join(temp_arr)}\n"
+            res += f"{c.split(' ')[1]} {'  '.join(temp_arr)}\n"
+            i += 1
+
+        return res
+
+    def output_rels_pri(self) -> str:
+        res = ""
+        res += f"  {' '.join([n.split(' ')[1] for n in self.country_names])}\n"
+        i = 0
+        for c, rels in self.country_relations_private.items():
+            temp_arr = [r for t, r in rels.items()]
+            temp_arr.insert(i, '/')
+            res += f"{c.split(' ')[1]} {'  '.join(temp_arr)}\n"
             i += 1
 
         return res

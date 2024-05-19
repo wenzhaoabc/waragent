@@ -148,7 +148,7 @@ class Formatter:
             if a == "Send Message":
                 str_res[a] = " ".join(cs)
             else:
-                ts = ''.join(cs)
+                ts = ''.join([i if i else '' for i in cs])
                 str_res[a] = f"We will {a}{' to ' if len(ts) > 1 else ' '}{ts}."
 
         return str_res

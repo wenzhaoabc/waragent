@@ -234,9 +234,6 @@ Action Detail and Corresponding Action Inputs:
 
 {p_current_situation(current_situation)}
 
-You have just asked several ministers in your country, and they have given the following advice in light of the current situation.
-{'\n'.join([f'{m}\ns' for m, s in minister_advice.items()])}
-
 Please present your actions in JSON format with keys being Action Names and values being Corresponding Action Inputs.
 For example:
 ```json
@@ -293,9 +290,9 @@ def p_later_generate_actions(
     """
     根据国家大臣建议和实际情形生成动作
     """
-    action_types = [a.name for a in action_types]
+    actions_name = [a.name for a in action_types]
     return f"""
-{p_global_system_prompt(self_country, country_profiles, action_types)}
+{p_global_system_prompt(self_country, country_profiles, actions_name)}
 {p_countries_description(self_country, country_profiles)}
 Your task is to evaluate the current situation and decide on the most useful next action.
 Your next decisions should be consistent with your previous actions in "Past Actions".
@@ -303,7 +300,7 @@ You need to first develop your thoughts step-by-step based on "Design Thought Pr
 You should separate actions into two categories: actions that you want to respond to the requests and actions that you want to do activated.
 
 Choose action among {", ".join(action.name for action in ActionTypeList)}
-Action Detail and Corresponding Action Inputs:{p_actions_description()}
+Action Detail and Corresponding Action Inputs:{p_actions_description(action_types)}
 
 Design Thought Process : {p_later_action_thought()}
 Past Actions :
@@ -315,9 +312,6 @@ The relationship between countries is as follows:
 
 Received Requests : 
 {received_requests}
-
-You have just asked several ministers in your country, and they have given the following advice in light of the current situation.
-{'\n'.join([f'{m}\ns' for m, s in minister_advice.items()])}
 
 Please Collect your answer in "response_actions" and "new_actions" into a JSON file with two keys: 'response_actions' and 'new_actions' with the corresponding values are the JSON files you have generated for "Actions to Respond to Requests" and "New Actions to Perform".
 For example:

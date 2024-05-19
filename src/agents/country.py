@@ -285,7 +285,7 @@ class CountryAgent(object):
         plan_prompt = cp_v2.p_first_generate_actions(
             self.profile, self.secretary.country_profiles, self.action_types,
             current_situation=trigger,
-            minister_advice=minister_advice,
+            minister_advice=dict(),
             round_times=1
         )
         try_count = 0
@@ -343,7 +343,7 @@ class CountryAgent(object):
             country_rels=country_rels,
             current_situation=current_situation,
             received_requests=received_requests_str,
-            minister_advice=minister_advice,
+            minister_advice=dict(),
             round_times=round_time
         )
         try_count = 0
@@ -466,24 +466,24 @@ class CountryAgent(object):
             dump_json("process", round_time,
                       {"country": self.profile.country_name, "received_requests": received_requests_str})
 
-        ques_to_ministers = self.generate_minister_questions(
-            current_situation,
-            received_requests_str if round_time > 1 else "",
-        )
-
-        dump_json("process", round_time,
-                  {"country": self.profile.country_name, "questions": ques_to_ministers})
-
-        output("### President Questions:\n" + json.dumps(ques_to_ministers))
-        minister_suggestions = self.get_minister_suggestions(
-            ques_to_ministers,
-            current_situation,
-            received_requests_str if round_time > 1 else "",
-        )
-        output("### Minister Suggestions:\n" + json.dumps(minister_suggestions))
-        dump_json("process", round_time,
-                  {"country": self.profile.country_name, "suggestions": minister_suggestions})
-
+        # ques_to_ministers = self.generate_minister_questions(
+        #     current_situation,
+        #     received_requests_str if round_time > 1 else "",
+        # )
+        #
+        # dump_json("process", round_time,
+        #           {"country": self.profile.country_name, "questions": ques_to_ministers})
+        #
+        # output("### President Questions:\n" + json.dumps(ques_to_ministers))
+        # minister_suggestions = self.get_minister_suggestions(
+        #     ques_to_ministers,
+        #     current_situation,
+        #     received_requests_str if round_time > 1 else "",
+        # )
+        # output("### Minister Suggestions:\n" + json.dumps(minister_suggestions))
+        # dump_json("process", round_time,
+        #           {"country": self.profile.country_name, "suggestions": minister_suggestions})
+        minister_suggestions = dict()
         if round_time == 1:
             new_formatted_messages, thought_process = self.first_plan(trigger, minister_suggestions)
         else:
