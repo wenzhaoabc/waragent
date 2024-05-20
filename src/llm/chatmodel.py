@@ -2,6 +2,7 @@ import os
 import json
 
 from openai import OpenAI
+from zhipuai import ZhipuAI
 from typing import Literal
 
 from src.utils import log
@@ -9,12 +10,12 @@ from src.utils import log
 
 class LLM(object):
     def __init__(
-            self,
-            model: str = "qwen-plus",
-            base_url: str = os.getenv("OPENAI_BASE_URL"),
-            api_key: str = os.getenv("OPENAI_API_KEY"),
-            temperature: float = 0.2,
-            system_prompt: str = None,
+        self,
+        model: str = "qwen-plus",
+        base_url: str = os.getenv("OPENAI_BASE_URL"),
+        api_key: str = os.getenv("OPENAI_API_KEY"),
+        temperature: float = 0.2,
+        system_prompt: str = None,
     ):
         self.model = model
         self.temperature = temperature
@@ -23,6 +24,10 @@ class LLM(object):
             log.error("Base URL or API KEY must be set")
             raise ValueError("Base URL or API KEY is None")
         self.client = OpenAI(api_key=api_key, base_url=base_url)
+        if model.startswith("glm"):
+            api_key = os.getenv("ZHIPU_API_KEY")
+            base_url = os.getenv("ZHIPU_BASE_URL")
+            self.client = ZhipuAI(api_key=api_key, base_url=base_url)
 
     def chat(self, prompt: str, temperature: float = 0.2):
         completions = self.client.chat.completions.create(
@@ -34,7 +39,9 @@ class LLM(object):
             temperature=temperature or self.temperature,
         )
         response = completions.choices[0].message.content
-        log.info(f"chat with [{self.model}]: prompt:{prompt} response:{completions.model_dump_json()}")
+        log.info(
+            f"chat with [{self.model}]: prompt:{prompt} response:{completions.model_dump_json()}"
+        )
         return response
 
     def chat_stream(self, prompt: str, callback: callable, temperature: float = 0.2):
@@ -60,11 +67,13 @@ class LLM(object):
         )
 
         response = completes.choices[0].message.content
-        log.info(f"chat with [{self.model}]: messages:{messages} response:{completes.model_dump_json()}")
+        log.info(
+            f"chat with [{self.model}]: messages:{messages} response:{completes.model_dump_json()}"
+        )
         return response
 
     def generate_stream(
-            self, messages: list[dict[str, str]], callback: callable
+        self, messages: list[dict[str, str]], callback: callable
     ) -> str:
         response = self.client.chat.completions.create(
             model=self.model, messages=messages, stream=True
@@ -81,11 +90,11 @@ class LLM(object):
         return res
 
     def chat_v(
-            self,
-            prompt: str,
-            img_url: str,
-            callback: callable = None,
-            temperature: float = 0.2,
+        self,
+        prompt: str,
+        img_url: str,
+        callback: callable = None,
+        temperature: float = 0.2,
     ):
         if self.model != "gpt-4-turbo":
             raise ValueError(f"mode {self.model} doesn't support visual model")
@@ -120,16 +129,18 @@ class LLM(object):
         return res
 
     def chat_with_tools(
-            self, messages: list[dict[str, str]], tools: list,
-            tool_choices: str = "auto"
+        self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto"
     ):
+        log.info(
+            f"chat with [{self.model}] with function call : {json.dumps({"messages":messages, "tools":tools, "tool_choices":tool_choices})}"
+        )
         res = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
             stream=False,
             temperature=self.temperature,
             tools=tools,
-            tool_choice=tool_choices
+            tool_choice=tool_choices,
         )
         res = res.model_dump_json()
         log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")

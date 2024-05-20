@@ -17,7 +17,7 @@ def setup_board(board: Board):
 def start_simulate(**kwargs):
     default = {
         "history": "II",
-        "llm": "qwen-max",
+        "llm": "glm-3-turbo",
         "round": 10,
         "tool_choice": "auto",
         "knowledge": "rag",

@@ -1,4 +1,5 @@
 import json
+import time
 
 from src.utils import log
 from src.llm import LLM
@@ -11,13 +12,13 @@ from src.agents.tools import InternetSearch, ReadWebPage, KnowledgeRetrieval
 
 class BaseMinister:
     def __init__(
-            self,
-            country_profile: CountryProfile,
-            countries_profile: list[CountryProfile],
-            action_types: list[ActionType],
-            llm: LLM,
-            tool_choices: str = "auto",
-            knowledge: str = "rag"
+        self,
+        country_profile: CountryProfile,
+        countries_profile: list[CountryProfile],
+        action_types: list[ActionType],
+        llm: LLM,
+        tool_choices: str = "auto",
+        knowledge: str = "rag",
     ) -> None:
         self.country_profile = country_profile
         self.country_name = country_profile.country_name
@@ -98,7 +99,10 @@ class BaseMinister:
     def llm_with_tools(self, messages: list[dict]) -> str:
         choice = self.llm.chat_with_tools(messages, self.tools, self.tool_choices)
         tool_call_result = []
-        if "tool_calls" not in choice["message"] or choice["message"]["tool_calls"] is None:
+        if (
+            "tool_calls" not in choice["message"]
+            or choice["message"]["tool_calls"] is None
+        ):
             return choice["message"]["content"]
         for tool in choice["message"]["tool_calls"]:
             tool_name = tool["function"]["name"]
@@ -108,24 +112,53 @@ class BaseMinister:
             if tool_name == "google_search":
                 content = self.google_search(arguments)
                 tool_call_result.append(
-                    {"tool_call_id": tool_id, "content": content, "role": "tool", "name": tool_name})
+                    {
+                        "tool_call_id": tool_id,
+                        "content": content,
+                        "role": "tool",
+                        "name": tool_name,
+                    }
+                )
             if tool_name == "knowledge_retrival":
                 content = self.knowledge_retrieval(arguments)
                 tool_call_result.append(
-                    {"tool_call_id": tool_id, "content": content, "role": "tool", "name": tool_name})
+                    {
+                        "tool_call_id": tool_id,
+                        "content": content,
+                        "role": "tool",
+                        "name": tool_name,
+                    }
+                )
             # TODO 支持更多工具
-            log.info(f"{self.country_name} minister {self.get_role()} calls tools {tool}. function result: {content}")
+            log.info(
+                f"{self.country_name} minister {self.get_role()} calls tools : {json.dumps({
+                    "country": self.country_name, 
+                    "role": self.get_role(), 
+                    "tool":tool,
+                    "function_result": content,
+                    })}"
+            )
         tool_call_messages = [choice["message"]]
         messages = messages + tool_call_messages + tool_call_result
         # 带有工具调用输出的大模型回复
         choice_2 = self.llm.chat_with_tools(messages, self.tools, self.tool_choices)
         return choice_2["message"]["content"]
 
-    def interact(self, question: str, current_situation: str, received_requests: str) -> str:
+    def interact(
+        self, question: str, current_situation: str, received_requests: str
+    ) -> str:
         # 反匿名化
         # country_names = [c.country_name for c in self.countries_profile]
         # real_question = self.anonymizer.de_anonymize(question)
-        system_prompt = self.get_system_prompt() + "\n\nCurrent Situation: " + current_situation
+        if self.get_role() == "Military Minister":
+            time.sleep(1)
+        elif self.get_role() == "Foreign Minister":
+            time.sleep(2)
+        elif self.get_role() == "Finance Minister":
+            time.sleep(3)
+        system_prompt = (
+            self.get_system_prompt() + "\n\nCurrent Situation: " + current_situation
+        )
         if received_requests:
             system_prompt = system_prompt + "\nReceived Requests" + received_requests
         messages = [
@@ -133,7 +166,9 @@ class BaseMinister:
             {"role": "user", "content": question},
         ]
         llm_res = self.llm_with_tools(messages)
-        log.info(f"{self.country_name} minister {self.get_role()} answer for question. q:{question} a:{llm_res}")
+        log.info(
+            f"{self.country_name} minister {self.get_role()} answer for question : {json.dumps({"question": question, "answer": llm_res})}"
+        )
         # 匿名化
         # llm_res = self.anonymizer.anonymize(llm_res)
         return llm_res
