@@ -1,21 +1,21 @@
-import os
 import json
+import os
+from datetime import datetime
 
 from openai import OpenAI
 from zhipuai import ZhipuAI
-from typing import Literal
 
 from src.utils import log
 
 
 class LLM(object):
     def __init__(
-        self,
-        model: str = "qwen-plus",
-        base_url: str = os.getenv("OPENAI_BASE_URL"),
-        api_key: str = os.getenv("OPENAI_API_KEY"),
-        temperature: float = 0.2,
-        system_prompt: str = None,
+            self,
+            model: str = "qwen-plus",
+            base_url: str = os.getenv("OPENAI_BASE_URL"),
+            api_key: str = os.getenv("OPENAI_API_KEY"),
+            temperature: float = 0.2,
+            system_prompt: str = None,
     ):
         self.model = model
         self.temperature = temperature
@@ -30,6 +30,10 @@ class LLM(object):
             self.client = ZhipuAI(api_key=api_key, base_url=base_url)
 
     def chat(self, prompt: str, temperature: float = 0.2):
+        timestamp = datetime.now().timestamp()
+        log.info(
+            f'chat with {self.model} : {json.dumps({"id": timestamp, "model": self.model, "prompt": prompt, "temperature": temperature})}'
+        )
         completions = self.client.chat.completions.create(
             model=self.model,
             messages=[
@@ -40,7 +44,7 @@ class LLM(object):
         )
         response = completions.choices[0].message.content
         log.info(
-            f"chat with [{self.model}]: prompt:{prompt} response:{completions.model_dump_json()}"
+            f'chat with [{self.model}]: {{"id":{timestamp},"message":{{"role": "user", "content": {prompt}}}, "response": {completions.model_dump_json()}}}'
         )
         return response
 
@@ -62,18 +66,21 @@ class LLM(object):
         return result
 
     def generate(self, messages: list[dict[str, str]]) -> str:
+        timestamp = datetime.now().timestamp()
+        log.info(
+            f'chat to {self.model} : {{"id": {timestamp}, "messages": {json.dumps(messages)}}}"}}'
+        )
         completes = self.client.chat.completions.create(
             model=self.model, messages=messages, temperature=0.1
         )
-
         response = completes.choices[0].message.content
         log.info(
-            f"chat with [{self.model}]: messages:{messages} response:{completes.model_dump_json()}"
+            f'chat with [{self.model}]: {{"id": {timestamp},"messages":{json.dumps(messages)},"response":{completes.model_dump_json()} }}'
         )
         return response
 
     def generate_stream(
-        self, messages: list[dict[str, str]], callback: callable
+            self, messages: list[dict[str, str]], callback: callable
     ) -> str:
         response = self.client.chat.completions.create(
             model=self.model, messages=messages, stream=True
@@ -90,11 +97,11 @@ class LLM(object):
         return res
 
     def chat_v(
-        self,
-        prompt: str,
-        img_url: str,
-        callback: callable = None,
-        temperature: float = 0.2,
+            self,
+            prompt: str,
+            img_url: str,
+            callback: callable = None,
+            temperature: float = 0.2,
     ):
         if self.model != "gpt-4-turbo":
             raise ValueError(f"mode {self.model} doesn't support visual model")
@@ -129,10 +136,11 @@ class LLM(object):
         return res
 
     def chat_with_tools(
-        self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto"
+            self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto"
     ):
+        timestamp = datetime.now().timestamp()
         log.info(
-            f"chat with [{self.model}] with function call : {json.dumps({"messages":messages, "tools":tools, "tool_choices":tool_choices})}"
+            f"chat with [{self.model}] with function call : {json.dumps({"id": timestamp, "messages": messages, "tools": tools, "tool_choices": tool_choices})}"
         )
         res = self.client.chat.completions.create(
             model=self.model,
@@ -142,9 +150,10 @@ class LLM(object):
             tools=tools,
             tool_choice=tool_choices,
         )
-        res = res.model_dump_json()
-        log.info(f"chat with [{self.model}]: messages:{messages} response:{res}")
-        return json.loads(res)["choices"][0]
+        # res = res.model_dump_json()
+        log.info(
+            f'chat with [{self.model}]: {{"id":{timestamp},"messages":{json.dumps(messages)}, "tools":{tools}, "tool_choices":{tool_choices}, "response":{res.model_dump_json()} }}')
+        return res.choices[0]
 
     def max_tokens(self, model_name: str) -> int:
         model_max_tokens = {

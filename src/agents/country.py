@@ -25,14 +25,14 @@ formatter = Formatter(None)
 
 class CountryAgent(object):
     def __init__(
-        self,
-        profile: CountryProfile,
-        profiles: list[CountryProfile],
-        action_types: list[ActionType],
-        llm: LLM,
-        board: Board,
-        tool_choices: str = "auto",
-        knowledge: str = "rag",
+            self,
+            profile: CountryProfile,
+            profiles: list[CountryProfile],
+            action_types: list[ActionType],
+            llm: LLM,
+            board: Board,
+            tool_choices: str = "auto",
+            knowledge: str = "rag",
     ) -> None:
         self.profile = profile
         self.name = profile.country_name
@@ -109,7 +109,7 @@ class CountryAgent(object):
         return actions, success_flag
 
     def generate_action(
-        self, prompt: str, round_time: int = 0
+            self, prompt: str, round_time: int = 0
     ) -> tuple[list[Action], list[Action], str, str]:
         """
         Generate action based on the prompt with LLM
@@ -225,7 +225,7 @@ class CountryAgent(object):
             )
 
     def generate_correct_format_actions(
-        self, prompt: str, round_time: int
+            self, prompt: str, round_time: int
     ) -> tuple[list[Action], list[Action], str]:
         """借助秘书代理检查，生成符合格式要求的动作序列"""
         if round_time == 1:
@@ -288,7 +288,7 @@ class CountryAgent(object):
             return new_actions, response_actions, thought_process
 
     def first_plan(
-        self, trigger: str, minister_advice: dict[str, str]
+            self, trigger: str, minister_advice: dict[str, str]
     ) -> tuple[list[NlAction], str]:
         """
         智能体进行第一次任务规划
@@ -343,13 +343,13 @@ class CountryAgent(object):
         return formatted_messages, thought_process
 
     def later_plan(
-        self,
-        round_time: int,
-        trigger: str,
-        current_situation: str,
-        country_rels: str,
-        received_requests: list[NlAction],
-        minister_advice: dict[str, str],
+            self,
+            round_time: int,
+            trigger: str,
+            current_situation: str,
+            country_rels: str,
+            received_requests: list[NlAction],
+            minister_advice: dict[str, str],
     ) -> tuple[list[NlAction], list[NlAction], str]:
         new_formatted_messages = []
         res_formatted_messages = []
@@ -437,9 +437,9 @@ class CountryAgent(object):
         return new_formatted_messages, res_formatted_messages, thought_process
 
     def generate_minister_questions(
-        self,
-        current_situation: str,
-        received_requests: str,
+            self,
+            current_situation: str,
+            received_requests: str,
     ) -> dict[str, str]:
         """根据当前状况向各位大臣提出请求意见"""
         prompt = cp_v2.p_ask_minister_instruction(
@@ -472,10 +472,10 @@ class CountryAgent(object):
         )
 
     def get_minister_suggestions(
-        self,
-        questions: dict[str, str],
-        current_situation: str,
-        received_requests: str,
+            self,
+            questions: dict[str, str],
+            current_situation: str,
+            received_requests: str,
     ) -> dict[str, str]:
 
         async def gather_suggestions():
@@ -502,7 +502,7 @@ class CountryAgent(object):
         return asyncio.run(gather_suggestions())
 
     def plan_v2(
-        self, round_time: int, trigger: str, current_situation: str, dump_json: callable
+            self, round_time: int, trigger: str, current_situation: str, dump_json: callable
     ):
         new_formatted_messages = []
         res_formatted_messages = []
@@ -511,6 +511,10 @@ class CountryAgent(object):
 
         received_requests = self.board.get_country_requests(self.profile.country_name)
         received_requests_str = "\n".join([rr.message for rr in received_requests])
+        output("### Received Requests:\n" + "\n".join([
+            f"{r.target} received {r.action} from {r.source} with content {r.message}"
+            for r in received_requests
+        ]) + "\n")
 
         if round_time > 1:
             dump_json(
@@ -536,7 +540,7 @@ class CountryAgent(object):
         output(
             "### President Questions:\n"
             + "\n".join(f"{m}\n{q}" for m, q in ques_to_ministers.items())
-            + "\n\n"
+            + "\n"
         )
         minister_suggestions = self.get_minister_suggestions(
             ques_to_ministers,
@@ -546,7 +550,7 @@ class CountryAgent(object):
         output(
             "### Minister Suggestions:\n"
             + "\n".join(f"{m}\n{q}" for m, q in minister_suggestions.items())
-            + "\n\n"
+            + "\n"
         )
         dump_json(
             "process",
@@ -560,7 +564,7 @@ class CountryAgent(object):
             )
         else:
             current_situation = (
-                self.stick.summary_internal_state() + "\n" + current_situation
+                    self.stick.summary_internal_state() + "\n" + current_situation
             )
             country_rels = self.board.output_rels()
             new_formatted_messages, res_formatted_messages, thought_process = (

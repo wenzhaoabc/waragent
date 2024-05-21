@@ -12,7 +12,7 @@ Country FR
 Country PO
 """
 
-France = ("""
+France = """
 Geographic Elements of Country FR
 
 Climate Conditions
@@ -24,12 +24,9 @@ Mountainous Areas: Alpine climate with cold, snowy winters and mild summers.
 
 Borders
 Country FR shares borders with several countries:
-Country BE to the north.
 Country GE to the east.
-Country SW to the southeast.
 Country IT to the southeast.
-Country SP to the southwest.
-Country LU to the northeast.
+
 
 Coastal Areas
 Country FR has extensive coastlines:
@@ -70,9 +67,9 @@ Grain Output: High productivity, making Country FR a major agricultural producer
 Industrial Output
 Light Industries: Concentrated in the capital city and other major urban centers, including textiles, food processing, and consumer goods.
 Heavy Industries: Located primarily in the northeast and central regions, focusing on steel production, machinery, and chemicals.
-""")
+"""
 
-Germany = ("""
+Germany = """
 Geographic Elements of Country GE
 
 Climate Conditions
@@ -84,10 +81,9 @@ Southern GE: Continental climate with warmer summers and colder winters, and hig
 
 Borders
 Country GE is bordered by several countries:
-North: Country DK with a land border.
-East: Country PO and Country CZ with land borders.
-South: Country AU and Country SW with land borders.
-West: Country FR Country LU, Country BE, and Country NE with land borders.
+East: Country PO with a land border.
+South: Country IT with a land border.
+West: Country FR with a land border.
 
 Coastal Areas
 Northern Coast: Bordered by the Sea NO and Sea BA, with significant ports like Port HA and Port KI.
@@ -126,9 +122,9 @@ Grain Output: High, particularly in the northern plains and central regions, pro
 Industrial Output
 Light Industry: Concentrated in cities like BE and MU, producing consumer goods, textiles, and chemicals.
 Heavy Industry: Predominantly in the RU region, focusing on coal, steel, machinery, and armaments.
-""")
+"""
 
-Britain = ("""
+Britain = """
 Geographic Elements of Country BR
 
 Climate Conditions
@@ -185,9 +181,9 @@ Heavy Industry: Predominantly in regions like WA, SC, and the Midlands, focusing
 
 Summary
 It had significant economic centers and was a major producer of coal and steel. The country was an island nation with extensive coastal areas, important river systems, and numerous ports facilitating trade and transportation. The population was concentrated in urban areas, and the nation had substantial agricultural output, though less than some other Area EU countries.
-""")
+"""
 
-Italy = ("""
+Italy = """
 Country IT: Geographic Elements
 
 Climate Conditions
@@ -197,9 +193,9 @@ Central Region: Exhibits a Mediterranean climate with mild, wet winters and hot,
 Southern Region and Islands: Also have a Mediterranean climate but with even hotter and drier summers.
 
 Borders
-North: Bordered by Country GE and Country AU, with Mountain AL forming a natural barrier.
+Country IT is bordered by several countries:
+North: Bordered by Country GE, with Mountain AL forming a natural barrier.
 West: Bordered by Country FR.
-East: Bordered by Country YU.
 South: Bordered by Ocean ME.
 
 Coastal Areas
@@ -236,9 +232,9 @@ Heavy Industry: Also predominantly in the northern region, including steel produ
 
 Summary
 Country IT, with its diverse climate, strategic location, and varied geography, played a significant role. Its mountainous northern border provided natural defense, while its extensive coastline facilitated trade and naval power. The industrial north, fertile central plains, and resource-rich regions contributed to its economic strength. The population distribution and industrial output reflected a balance between agriculture and manufacturing, making Country IT a significant player in the geopolitical landscape of the time.
-""")
+"""
 
-Hungary = ("""
+Hungary = """
 Geographic Elements of Country HU
 
 Climate Conditions
@@ -246,10 +242,11 @@ Climate Type: Country HU has a temperate continental climate.
 Seasons: The country experiences four distinct seasons with cold winters and warm summers.
 Precipitation: Moderate rainfall is distributed throughout the year, with slightly higher amounts during the summer months.
 
-Borders and Neighboring Countries
+Borders
+Country HU is bordered by several countries:
 North: Borders Country SL with the border primarily defined by the River DA.
 East: Borders Country RO with the Carpathian Mountains forming part of the natural boundary.
-South: Borders Country YU and Country CR.
+South: Borders Country YU.
 West: Borders Country AU with the River DA also marking part of this boundary.
 
 Coastal and Inland Features
@@ -283,9 +280,9 @@ Energy Production: Coal mining was a key industry, providing fuel for both indus
 
 Summary
 Country HU was characterized by its temperate continental climate, strategic location in Central Area EU, and significant natural resources including coal and bauxite. The country was landlocked with major rivers such as the River DA and River TI playing crucial roles in transportation and agriculture. The Great Plain (Plain GP) was a major agricultural region, and the capital city, City BU, served as the primary economic and industrial center. The population was around 9 million, with a mix of urban and rural inhabitants, and the country had a diverse industrial base ranging from light to heavy industries.
-""")
+"""
 
-China = ("""
+China = """
 Country CH: Geographic Elements
 
 Climate Conditions
@@ -293,11 +290,10 @@ Country CH has a diverse climate, ranging from tropical in the south to subarcti
 
 Borders
 Country CH is bordered by several countries:
-To the north, it borders Country MO, separated by the Desert GO and the River AM.
-To the northeast, it borders Country KO.
+To the north, it borders Country SU, separated by the Desert GO and the River AM.
 To the east, it is bordered by the Ocean PA.
-To the south, it borders Country IN and Country SE, separated by Mountain HI and River ME.
-To the west, it borders Country SU, separated by Mountain TI and Desert TA.
+In the northeast, China and Japan face each other across the sea.
+Country CH and the Country US are on opposite sides of the Ocean PA.
 
 Coastal Regions
 The eastern and southeastern parts of Country CH are coastal, facing the Ocean PA. Major coastal cities include City SH, City GU, and City TI, which are significant ports and economic centers.
@@ -334,20 +330,20 @@ The central regions also contribute significantly to the country's grain output,
 Industrial Output
 Light Industry: Textile production, particularly in the eastern cities like City SH and City GU.
 Heavy Industry: Concentrated in the northern and northeastern regions, focusing on steel production, machinery, and shipbuilding.
-""")
+"""
 
-Soviet_Union = ("""
+Soviet_Union = """
 Geographic Elements of Country SU
 
 Climate Conditions:
 Country SU spans a vast area with diverse climate zones. The western part experiences a temperate continental climate with cold winters and warm summers. The central and eastern regions have a more severe continental climate with extremely cold winters and hot summers. The northern part, near the Arctic Ocean, has a subarctic and polar climate, characterized by long, harsh winters and short, cool summers.
 
-Borders:
+Borders
 Country SU shares borders with several countries:
-To the west, it borders Country GE, Country PO, Country FI, Country ES, Country LA, and Country LI.
-To the south, it borders Country RO, Country TU, Country IR, Country AF, and Country CH.
-To the east, it has a long coastline along Ocean PA (Pacific Ocean).
-To the north, it has a coastline along Ocean AR (Arctic Ocean).
+To the west, it borders Country GE, Country PO.
+To the south, it borders Country CH.
+To the east, it has a long coastline along Ocean PA.
+To the north, it has a coastline along Ocean AR.
 
 Coastal Areas:
 Northern coast along Ocean AR.
@@ -386,9 +382,9 @@ Grain output was significant, with wheat, barley, and rye being the primary crop
 Industrial Output:
 Light Industry: Concentrated in western cities like M and LE, producing textiles, consumer goods, and food products.
 Heavy Industry: Focused on steel production, machinery, and military equipment, with significant centers in the Ural Mountains (e.g., City EK) and the region of DO.
-""")
+"""
 
-United_States = ("""
+United_States = """
 Geographic Elements of Country US
 
 Climate Conditions
@@ -401,9 +397,6 @@ Far Northern Regions: Continental climate with cold winters and warm summers.
 
 Borders
 Country US is bordered by:
-
-Country CN (to the north): Separated by a long land border.
-Country MX (to the south): Separated by a land border.
 Ocean AT (to the east): Coastal boundary along the eastern seaboard.
 Ocean PC (to the west): Coastal boundary along the western seaboard.
 
@@ -444,20 +437,18 @@ Grain Output: High production of wheat, corn, and other grains, particularly in 
 Industrial Output
 Light Industry: Concentrated in the northeastern and midwestern cities, including textiles, clothing, and consumer goods.
 Heavy Industry: Major centers in the midwestern region, focusing on steel production, machinery, and automotive manufacturing.
-""")
+"""
 
-Poland = ("""
+Poland = """
 Geographic Elements of Country PO
 
 Climate Conditions
 Country PO features a temperate climate with cold winters and warm summers. The climate varies from maritime in the north and west to more continental in the south and east. Winters can be harsh, especially in the eastern regions, while summers are generally mild to warm.
 
-Borders and Neighboring Countries
+Borders
 Country PO is bordered by:
 Country GE to the west.
 Country SU to the east.
-Country CZ to the south.
-Country LT to the northeast.
 
 Coastal Areas
 Country PO has a northern coastline along Ocean BA, which provides access to maritime trade routes and fishing resources.
@@ -497,9 +488,9 @@ Light industries: Textiles, food processing, and consumer goods, distributed acr
 Additional Geographic Features
 Forests: Extensive forested areas, particularly in the northeast and southeast, providing timber and other forest products.
 Lakes: Numerous lakes, especially in the northern and northeastern regions, contributing to the country’s natural beauty and supporting fishing and tourism industries.
-""")
+"""
 
-Japan = ("""
+Japan = """
 Geographic Overview of Country JA
 
 Climate Conditions:
@@ -548,7 +539,7 @@ Heavy industries were focused on steel production, shipbuilding, and machinery m
 
 Summary:
 Country JA, an island nation in Area EA, was characterized by a diverse climate, extensive coastline, and mountainous terrain. It had significant urban economic centers and limited natural resources, relying heavily on imports. The population was about 70 million, with a strong emphasis on agriculture and growing industrial output. Major cities like City TO, City OS, and City YO played key roles in the country's economy, while the agricultural sector focused on maximizing the limited arable land for staple crops like rice.
-""")
+"""
 
 CountryGeography = {
     "Country FR": France,
@@ -560,5 +551,28 @@ CountryGeography = {
     "Country JA": Japan,
     "Country HU": Hungary,
     "Country BR": Britain,
-    "Country IT": Italy
+    "Country IT": Italy,
 }
+
+f_r = {
+    "Country FR": "France",
+    "Country GE": "Germany",
+    "Country PO": "Poland",
+    "Country CH": "China",
+    "Country US": "United States",
+    "Country SU": "Soviet Union",
+    "Country JA": "Japan",
+    "Country HU": "Hungary",
+    "Country BR": "Britain",
+    "Country IT": "Italy",
+}
+
+# s = ""
+# for c, p in CountryGeography.items():
+#
+#     s += f"Country Name: {c}\n{p}"
+#     s += "\n===========\n"
+#
+# for f, r in f_r.items():
+#     s = s.replace(f, r)
+# print(s)

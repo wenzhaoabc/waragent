@@ -33,3 +33,5 @@ static/
 src/ui/assert/
 logs/
 src/ui/
+
+record/

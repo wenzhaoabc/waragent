@@ -1,6 +1,7 @@
 """
 工具调用，Google搜索
 """
+
 import os
 import requests
 
@@ -30,7 +31,7 @@ class InternetSearch:
                     "original_text": {
                         "type": "string",
                         "description": "The original text of the search request.",
-                    }
+                    },
                 },
                 "required": ["keywords", "original_text"],
             },
@@ -40,7 +41,9 @@ class InternetSearch:
     def __init__(self):
         pass
 
-    def run(self, keywords: str, original_text: str, locale: str = 'en', country: str = 'us') -> list[dict]:
+    def run(
+        self, keywords: str, original_text: str, locale: str = "en", country: str = "us"
+    ) -> list[dict]:
         headers = {"Authorization": "Bearer " + os.getenv("TOOLS_TOKEN")}
         url = os.getenv("TOOLS_URL") + "/api/v1/searchgoogle"
         req_body = {
@@ -49,7 +52,8 @@ class InternetSearch:
             "locale": locale,
             "country": country,
         }
-        response = requests.post(url, headers=headers, json=req_body)
+        proxy = {"http": os.getenv("HTTP_PROXY"), "https": os.getenv("HTTPS_PROXY")}
+        response = requests.post(url, headers=headers, json=req_body, proxies=proxy)
         if response.status_code != 200:
             c = response.content
             return []

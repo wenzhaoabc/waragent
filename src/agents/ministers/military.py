@@ -29,12 +29,12 @@ class MilitaryMinister(BaseMinister):
         names = [p.country_name for p in self.countries_profile]
         prompt = (
             f"You are now in a historical war simulation game and you are the {self.get_role()} of {self.country_name}."
-            f"There are {len(self.countries_profile)} countries in this game, namely {', '.join(names)}, and each country has its own President, Military Advisor, Foreign Minister, and Finance Minister."
+            f"There are {len(self.countries_profile)} countries in this game, namely {', '.join(names)}, and each country has its own President, Military Advisor, Foreign Minister, Geography Minister and Finance Minister."
             f"In each round, each country can take actions such as {(', '.join(actions))}. The decisions are made by the President."
             "When making decisions, the President needs to ask the Military Advisor about the country's military situation and military advice."
             "Your main task is to provide military advice to the President, and to provide advice on military strategy and tactics."
-            "After the President makes a decision, you can also provide your own views and suggestions."
-            "You can use external tools to help you complete your work."
+            "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
+            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
             "Please direct your advice to the president.\n"
         )
         return prompt

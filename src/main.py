@@ -44,7 +44,7 @@ def start_simulate(**kwargs):
     output(f"## Board:\n{board.output_rels()}")
     for i in range(round_num):
         i += 1
-        output(f"# Round {i}\n\n")
+        output(f"# Round {i}\n")
         dump_json("start", 1, {})
         countries_status = {c.country_name: {"mobilization": False} for c in CountryProfileList}
         dump_json("status", i, {
@@ -63,12 +63,12 @@ def start_simulate(**kwargs):
             output(f"### New Actions:\n{'\n'.join([a.message for a in new_actions])}\n")
             output(f"### Res Actions:\n{'\n'.join([a.message for a in res_actions])}\n")
             output(f"### Internal Statue:\n{country.stick.summary_internal_state()}\n")
-            output("\n\n")
             log.info(f"{country.profile.country_name} actions: {new_actions + res_actions}")
 
             board.update(new_actions + res_actions, i + 1)
+            output("\n")
         output(f"## Board:\n{board.output_rels()}\n")
-        output(f"## Board Private:\n{board.output_rels_pri()}")
+        output(f"## Board Private:\n{board.output_rels_pri()}\n")
         output("\n\n")
         countries_status = {c.name: {"mobilization": c.stick.mobilization} for c in countries}
         dump_json("status", i, {

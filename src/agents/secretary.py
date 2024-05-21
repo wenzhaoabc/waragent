@@ -185,6 +185,12 @@ class SecretaryAgent:
                     suggestions.append(
                         f"Invalid action: {source_country} has already signed b peace agreement with {target_country}. You should betray it first."
                     )
+            if "Accept " in action_name:
+                received_requests = self.board.get_country_requests(self.name)
+                if action_name not in [r.action for r in received_requests]:
+                    suggestions.append(
+                        f"Invalid action: {target_country} does not request {action_name}. You should not accept {action_name}"
+                    )
             if "Publish " in action_name:
                 action_rel_dict = {
                     "Publish Military Alliance": CountryRel.M,
@@ -417,4 +423,3 @@ class SecretaryAgent:
                 r.action == required_request_action and r.source == target_country and r.target == source_country]:
                 modified_responses.append(response)
         return modified_responses
-

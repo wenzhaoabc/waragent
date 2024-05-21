@@ -17,7 +17,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 
 # 定义handler的输出格式
-formatter = logging.Formatter('%(asctime)s - [%(filename)s:%(lineno)d] - %(levelname)-7s : %(message)s')
+formatter = logging.Formatter('%(asctime)s - [%(filename)-20s:%(lineno)-3d] - %(levelname)-7s : %(message)s')
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
 
