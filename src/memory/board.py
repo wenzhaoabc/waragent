@@ -299,7 +299,7 @@ class Board:
             elif r == CountryRel.P:
                 current_situation += f"forged a peace agreement alliance with {' '.join(countries)}, "
             elif r == CountryRel.W:
-                current_situation += "and are at war with {' '.join(countries)}. "
+                current_situation += f"and are at war with {' '.join(countries)}. "
 
         nl_str = {
             CountryRel.W: "at war",
@@ -307,9 +307,10 @@ class Board:
             CountryRel.T: "forged non-intervention treaties",
             CountryRel.P: "forged peace agreement",
         }
+        current_situation += "\nFor other countries:\n"
         for c, rels in other_countries_rels.items():
-            assert isinstance(c, str)
-            assert isinstance(rels, dict)
+            # assert isinstance(c, str)
+            # assert isinstance(rels, dict)
             current_situation += f"\n{c} has {', '.join([nl_str.get(k) + ' with ' + v for k, v in rels.items()])}."
 
         if current_situation:

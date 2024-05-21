@@ -5,7 +5,7 @@ from src.llm import LLM
 from src.profiles import CountryProfile
 from src.profiles.agent_actions import ActionType
 from src.utils import log
-
+from src.prompts.country_prompt_v2 import p_countries_description
 
 class BaseMinister:
     def __init__(
@@ -155,8 +155,9 @@ class BaseMinister:
         if received_requests:
             user_prompt = user_prompt + "Received Requests: \n" + received_requests
         user_prompt = user_prompt +"Questions From President:\n"+ question + "Please provide your analysis and advice."
+        system_prompt = self.get_system_prompt() + "\n\nThe following is the profiles of the countries :\n" + p_countries_description(self.country_profile, self.countries_profile)
         messages = [
-            {"role": "system", "content": self.get_system_prompt()},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ]
         llm_res = self.llm_with_tools(messages)

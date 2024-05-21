@@ -16,7 +16,7 @@ def p_global_system_prompt(
     """全局系统提示"""
     country_name = self_country.country_name
     country_names = [c.country_name for c in country_profiles]
-    # 你处在一个战争游戏中，在这个游戏中共有{}个国家，分别是{}，每个国家都有自己的总统、军事大臣、外交大臣和财政大臣，你是{}的总统。
+    # 你处在一个战争游戏中，在这个游戏中共有{}个国家，分别是{}，每个国家都有自己的总统、军事大臣、外交大臣,财政大臣,地理大臣，你是{}的总统。
     # 在每一轮的交互中，每个国家可以做出的动作包括：宣战、和谈、调整军费、调整外交政策、调整财政政策等。
     # 具体的决策由总统做出，总统可以在做出决策前向各位大臣寻求建议或在总厨决策后询问各位大臣的看法。
     # 你作为这个国家的总统，需要根据大臣的建议和你的判断做出最正确的决策，这个决策的目标是使你的国家在这场战争游戏中取得最终的胜利。
@@ -84,7 +84,7 @@ def p_ask_minister_advice(self_country: CountryProfile) -> str:
             "Military Minister": "Country AB is at war with Country CD. Our national security is under serious threat. How ready are our forces in terms of numbers, training, equipment, intelligence, etc.? Who are our Allies and partners?",
             "Finance Minister": "Our economy is in a downturn. What is the current state of our economy? What are the main sources of income and expenditure? What is the current state of our national debt?",
             "Foreign Minister": "Country AB is at war with Country CD. What is the current state of the war? What are the main objectives of the war? What are the main threats to our country? What are the main opportunities for our country?",
-            "Geography Minister": "Where is Country AB?"
+            "Geography Minister": "Where is Country AB? What about our neighbors?"
         })}"""
         "\n```"
     )
