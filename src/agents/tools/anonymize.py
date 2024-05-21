@@ -2,16 +2,23 @@
 历史事件匿名化组件
 将真实的国家名/历史事件进行替换
 """
+
 from src.llm import LLM
 from src.profiles import CountryProfile
 
 
 class Anonymize:
-    def __init__(self, llm: LLM, countries_profile: list[CountryProfile]):
-        self.llm = llm
+    def __init__(
+        self,
+        llm: LLM,
+        country_profile: CountryProfile,
+        countries_profile: list[CountryProfile],
+    ):
+        self.llm = LLM("gpt-a")
+        self.country_profile = country_profile
         self.countries_profile = countries_profile
 
-    def get_system_prompt(self) -> str:
+    def anonymize_prompt(self) -> str:
         prompt = (
             "You are an expert in history and linguistics."
             "You specialize in anonymizing historical events in simulations of historical events."
@@ -19,6 +26,7 @@ class Anonymize:
             'You need to follow A certain rule to do this. Replace the actual country name with "Country" followed by a space followed by the first two letters of the country. For example, replace "Germany" with "Country GE".'
             'For City name replace with "City" plus space plus first two letters of city. For example, replace "Washington" with "City WA".\n'
             'It is important to note that we are now assuming the context is in 1939. For temporal expressions in the statement, such as "current," "nowadays," "at present," etc., these should also be replaced with references to 1939.\n'
+            f"One more thing, first person pronouns in the text, such as I, we, etc., all refer to {self.country_profile.real_name}, please replace them with {self.country_profile.real_name} country names."
             "Please output the anonymized result directly, do not output additional content."
         )
         return prompt
@@ -41,16 +49,20 @@ class Anonymize:
 
     def anonymize(self, input_txt: str) -> str:
         messages = [
-            {"role": "system", "content": self.get_system_prompt()},
-            {"role": "user", "content": input_txt}
+            {"role": "system", "content": self.anonymize_prompt()},
+            {"role": "user", "content": input_txt},
         ]
-        output = self.llm.generate(messages)
+        output = self.llm.generate(
+            messages, template={"anonymize_prompt": self.anonymize_prompt()}
+        )
         return output
 
     def de_anonymize(self, input_txt: str) -> str:
         messages = [
             {"role": "system", "content": self.de_anonymize_prompt()},
-            {"role": "user", "content": input_txt}
+            {"role": "user", "content": input_txt},
         ]
-        output = self.llm.generate(messages)
+        output = self.llm.generate(
+            messages, template={"de_anonymize_prompt": self.de_anonymize_prompt()}
+        )
         return output

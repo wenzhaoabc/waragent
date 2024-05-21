@@ -235,7 +235,7 @@ Action Detail and Corresponding Action Inputs:
 {p_current_situation(current_situation)}
 
 You have just asked several ministers in your country, and they have given the following advice in light of the current situation.
-{'\n'.join([f'{m}\ns' for m, s in minister_advice.items()])}
+{'\n'.join([f'The suggestions from {m}:\n{s}\n' for m, s in minister_advice.items()])}
 
 Please present your actions in JSON format with keys being Action Names and values being Corresponding Action Inputs.
 For example:
@@ -317,7 +317,7 @@ Received Requests :
 {received_requests}
 
 You have just asked several ministers in your country, and they have given the following advice in light of the current situation.
-{'\n'.join([f'{m}\ns' for m, s in minister_advice.items()])}
+{'\n'.join([f'The suggestions from {m}:\n{s}\n' for m, s in minister_advice.items()])}
 
 Please Collect your answer in "response_actions" and "new_actions" into a JSON file with two keys: 'response_actions' and 'new_actions' with the corresponding values are the JSON files you have generated for "Actions to Respond to Requests" and "New Actions to Perform".
 For example:

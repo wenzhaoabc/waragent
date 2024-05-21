@@ -21,11 +21,11 @@ class BaseMinister:
         self.country_name = country_profile.country_name
         self.countries_profile = countries_profile
         self.action_types = action_types
-        self.llm = llm
+        self.llm = LLM("glm-3-turbo")
         self.tools = AllTools
         self.tool_choices = tool_choices
         self.knowledge = knowledge
-        self.anonymizer = Anonymize(llm, countries_profile)
+        self.anonymizer = Anonymize(llm,country_profile, countries_profile)
 
     def get_role(self) -> str:
         pass
@@ -94,8 +94,11 @@ class BaseMinister:
         return anonymized_knowledge
 
     def llm_with_tools(self, messages: list[dict]) -> str:
-        choice = self.llm.chat_with_tools(messages, self.tools, self.tool_choices)
-        choice = choice.model_dump()
+        choice_ = self.llm.chat_with_tools(messages, self.tools, self.tool_choices,template={"minister_prompt":self.get_system_prompt()})
+        try:
+            choice = choice_.model_dump()
+        except Exception as e:
+            choice = choice_
         # choice = json.loads(choice)
         tool_call_result = []
         if (
@@ -142,8 +145,11 @@ class BaseMinister:
         tool_call_messages = [choice["message"]]
         messages = messages + tool_call_messages + tool_call_result
         # 带有工具调用输出的大模型回复
-        choice_2 = self.llm.chat_with_tools(messages, self.tools, self.tool_choices)
-        choice_2 = choice_2.model_dump()
+        choice_2_ = self.llm.chat_with_tools(messages, self.tools, self.tool_choices,template={"minister_prompt":self.get_system_prompt()})
+        try:
+            choice_2 = choice_2_.model_dump()
+        except Exception as e:
+            choice_2 = choice_2_
         return choice_2["message"]["content"]
 
     def interact(
@@ -155,12 +161,16 @@ class BaseMinister:
         if received_requests:
             user_prompt = user_prompt + "Received Requests: \n" + received_requests
         user_prompt = user_prompt +"Questions From President:\n"+ question + "Please provide your analysis and advice."
-        system_prompt = self.get_system_prompt() + "\n\nThe following is the profiles of the countries :\n" + p_countries_description(self.country_profile, self.countries_profile)
+        system_prompt = self.get_system_prompt() 
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ]
-        llm_res = self.llm_with_tools(messages)
+        try:
+            llm_res = self.llm_with_tools(messages)
+        except Exception as e:
+            log.error(f"Error in interact with minister: {json.dumps({"country":self.country_profile.country_name, "role":self.get_role(), "error":str(e)})}")
+            llm_res = "I have no some sepicific advice for you."
         log.info(
             f"{self.country_name} minister {self.get_role()} answer for question : {json.dumps({"question": question, "answer": llm_res})}"
         )

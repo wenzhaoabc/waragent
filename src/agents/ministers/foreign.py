@@ -30,6 +30,7 @@ class ForeignMinister(BaseMinister):
             f"Your main task is to explain to the president what the country's foreign policy should be, that is, what it should do to other countries, and to explain your reasons in as much detail as possible."
             "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
             "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
-            f"Please direct your advice to the president.\n"
+            "You are talking with the President face to face and please address your proposal directly. Note that your answer should be summarized in 300 words or less."
+      
         )
         return prompt
