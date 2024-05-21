@@ -46,10 +46,7 @@ class GeographyMinister(BaseMinister):
             "The President relies on your insights when devising the nation's comprehensive direction, be it opening new trade routes, constructing defenses, or leveraging terrain for resource exploitation."
             "Post-decision, evaluate the plan's geographical feasibility and offer supplementary views on maximizing geographical advantage."
             "External geographic information systems and data analysis tools are at your disposal to augment your analytical prowess, ensuring precision and foresight in your counsel."
-            "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
-            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
-            "The following is the geography profile of your country:\n"
-            f"{self.get_geo_profile()}\n\n"
+            "Please summarize your answer according to your current knowledge, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
             "Present your analyses and strategic proposals from a professional geographical standpoint, directed at the President.\n"
         )
 

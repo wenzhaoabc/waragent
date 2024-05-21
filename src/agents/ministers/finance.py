@@ -27,8 +27,7 @@ class FinanceMinister(BaseMinister):
             f"In each round, each country can take actions such as {(', '.join(actions))}. The decisions are made by the President."
             f"When making decisions, the President needs to ask the you, the {self.get_role()} about the financial situation of the country\n"
             "The President needs you to understand the country's economy, finances, population, industrial and agricultural production, etc., and you need to obtain enough relevant information through the information provided and external tools to advise the President accordingly."
-            "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
-            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
+            "Please summarize your answer according to your current knowledge, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
             "Please advise the President and make a case for everything you have obtained. Please output your results directly."
         )
         return prompt

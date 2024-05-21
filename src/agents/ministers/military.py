@@ -33,8 +33,7 @@ class MilitaryMinister(BaseMinister):
             f"In each round, each country can take actions such as {(', '.join(actions))}. The decisions are made by the President."
             "When making decisions, the President needs to ask the Military Advisor about the country's military situation and military advice."
             "Your main task is to provide military advice to the President, and to provide advice on military strategy and tactics."
-            "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
-            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
+            "Please summarize your answer according to your current knowledge, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
             "Please direct your advice to the president.\n"
         )
         return prompt

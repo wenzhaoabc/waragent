@@ -28,8 +28,7 @@ class ForeignMinister(BaseMinister):
             "The president needs you to understand the country's potential Allies, potential enemies, and current threats."
             "The president also needs you to understand the military, economic and diplomatic situation of other countries."
             f"Your main task is to explain to the president what the country's foreign policy should be, that is, what it should do to other countries, and to explain your reasons in as much detail as possible."
-            "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
-            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
+            "Please summarize your answer according to your current knowledge, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
             f"Please direct your advice to the president.\n"
         )
         return prompt
