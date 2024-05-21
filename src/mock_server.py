@@ -28,7 +28,7 @@ async def _start_simulate():
                     parent_pipe.send("TERMINATE")  # 发送终止信号给子进程
                     break
                 with open(
-                    f'{os.getenv("ROOT_PATH")}/static/simulate_logs/minister_tool_{model}_2.txt',
+                    f'{os.getenv("ROOT_PATH")}/static/simulate_logs/only_president_{model}.txt',
                     "a",
                 ) as f:
                     f.write(json.dumps(message) + "\n")

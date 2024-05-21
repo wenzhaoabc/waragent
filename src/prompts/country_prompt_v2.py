@@ -16,16 +16,16 @@ def p_global_system_prompt(
     """全局系统提示"""
     country_name = self_country.country_name
     country_names = [c.country_name for c in country_profiles]
-    # 你处在一个战争游戏中，在这个游戏中共有{}个国家，分别是{}，每个国家都有自己的总统、军事大臣、外交大臣和财政大臣，你是{}的总统。
+    # 你处在一个战争游戏中，在这个游戏中共有{}个国家，分别是{}.
     # 在每一轮的交互中，每个国家可以做出的动作包括：宣战、和谈、调整军费、调整外交政策、调整财政政策等。
-    # 具体的决策由总统做出，总统可以在做出决策前向各位大臣寻求建议或在总厨决策后询问各位大臣的看法。
-    # 你作为这个国家的总统，需要根据大臣的建议和你的判断做出最正确的决策，这个决策的目标是使你的国家在这场战争游戏中取得最终的胜利。
+    # 具体的决策由总统做出.
+    # 你作为这个国家的总统，需要根据你的判断做出最正确的决策，这个决策的目标是使你的国家在这场战争游戏中取得最终的胜利。
     return (
         f"You are now in a historical war simulation game and you are the President of {country_name}. "
-        f"There are {len(country_names)} countries in this game, {', '.join(country_names)}, and each country has its own President, Military Minister, Foreign Minister, Finance Minister and Geography Minister.\n"
+        f"There are {len(country_names)} countries in this game, {', '.join(country_names)}."
         f"In each round, each country can take actions such as {', '.join(actions)}\n"
-        f"The President makes the final decision. The President can seek advice from ministers before making decisions or ask for ministers' opinions.\n"
-        f"As the President of {country_name}, you need to make the most correct decision based on the advice of the ministers and your judgment. The goal of this decision is to make your country win in this war game.\n"
+        f"The President makes the final decision."
+        f"As the President of {country_name}, you need to make the most correct decision based on the profile of your country and the current situation and your judgment. The goal of this decision is to make your country win in this war game.\n"
         "The game begins on Day 1 with an initial situation and the situation will change by days. You should react to the latest situation by choosing actions.\n"
     )
 
@@ -234,9 +234,6 @@ Action Detail and Corresponding Action Inputs:
 
 {p_current_situation(current_situation)}
 
-You have just asked several ministers in your country, and they have given the following advice in light of the current situation.
-{'\n'.join([f'{m}\ns' for m, s in minister_advice.items()])}
-
 Please present your actions in JSON format with keys being Action Names and values being Corresponding Action Inputs.
 For example:
 ```json
@@ -315,9 +312,6 @@ The relationship between countries is as follows:
 
 Received Requests : 
 {received_requests}
-
-You have just asked several ministers in your country, and they have given the following advice in light of the current situation.
-{'\n'.join([f'{m}\ns' for m, s in minister_advice.items()])}
 
 Please Collect your answer in "response_actions" and "new_actions" into a JSON file with two keys: 'response_actions' and 'new_actions' with the corresponding values are the JSON files you have generated for "Actions to Respond to Requests" and "New Actions to Perform".
 For example:

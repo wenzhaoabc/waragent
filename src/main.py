@@ -17,7 +17,7 @@ def setup_board(board: Board):
 def start_simulate(**kwargs):
     default = {
         "history": "II",
-        "llm": "glm-3-turbo",
+        "llm": "gpt-4o",
         "round": 10,
         "tool_choice": "auto",
         "knowledge": "rag",
