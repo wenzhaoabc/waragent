@@ -30,7 +30,7 @@ class LLM(object):
             self.client = ZhipuAI(api_key=api_key, base_url=base_url)
 
     def chat(self, prompt: str, temperature: float = 0.2,template:dict[str,str]=None):
-        timestamp = datetime.now().timestamp()
+        timestamp = int(datetime.now().timestamp()*1000)
         log_prompt = prompt
         if template:
             for key, value in template.items():
@@ -75,7 +75,7 @@ class LLM(object):
         return result
 
     def generate(self, messages: list[dict[str, str]],template:dict[str,str]=None) -> str:
-        timestamp = datetime.now().timestamp()
+        timestamp = int(datetime.now().timestamp()*1000)
         log_messages = []
         if template:
             for key, value in template.items():
@@ -158,7 +158,7 @@ class LLM(object):
             self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto",
             template:dict[str,str]=None
     ):
-        timestamp = datetime.now().timestamp()
+        timestamp = int(datetime.now().timestamp()*1000)
         log_messages = []
         if template:
             for key, value in template.items():

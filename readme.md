@@ -133,3 +133,9 @@ Stick : Single country situation
 | City NO     | (Novosibirsk)        |          |
 | Region DO   | (Donbas)             |          |
 | Region KU   | (Kuznetsk Basin)     |          |
+
+
+
+
+
+

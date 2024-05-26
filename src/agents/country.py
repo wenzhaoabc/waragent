@@ -1,7 +1,6 @@
 import json
 import re
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 
 from src.llm import LLM
 from src.memory.board import Board
@@ -76,6 +75,8 @@ class CountryAgent(object):
             "ask_minister_advice": cp_v2.p_ask_minister_advice(profile),
             "country_rel_description": cp_v2.p_country_rel_description("", profiles),
             "actions_description": cp_v2.p_actions_description(action_types),
+            "generate_json_actions_example": cp_v2.p_generate_json_actions_example(),
+            "first_action_generation_exampel": cp_v2.p_first_generate_actions_example(),
         }
 
     def fix_json(self, e: str, original_json: str) -> str:
@@ -88,6 +89,11 @@ class CountryAgent(object):
         llm_res = self.llm.chat(prompt=prompt)
         actions_str = extract_json(llm_res)
         return actions_str
+
+    def extract_json_by_llm(self, text: str) -> dict:
+        """借助LLM提取JSON格式的字符串"""
+        pass
+        # return actions
 
     def filter_actions(self, actions: dict) -> tuple[dict, bool]:
         """根据动作列表过滤出符合基本格式要求的动作"""
@@ -121,7 +127,7 @@ class CountryAgent(object):
         return actions, success_flag
 
     def generate_action(
-        self, prompt: str, round_time: int = 0
+        self, prompt: str, round_time: int = 0, first_generate: bool = False
     ) -> tuple[list[Action], list[Action], str, str]:
         """
         Generate action based on the prompt with LLM
@@ -186,7 +192,7 @@ class CountryAgent(object):
             try:
                 actions = json.loads(actions_str)
                 if not isinstance(actions, dict):
-                    log.error("generate plan: error in json decode actions, not a list")
+                    log.error("generate plan: error in json decode actions, not a dict")
                     continue
             except Exception as e:
                 log.warn(f"generate plan: error in json decode actions: {actions_str}")
@@ -202,7 +208,7 @@ class CountryAgent(object):
             log.info(f"No.{round_time} {self.name} generate actions : {actions}")
             new_actions = {}
             response_actions = {}
-            if round_time == 1:
+            if first_generate:
                 new_actions, success_flag = self.filter_actions(actions)
             else:
                 if "response_actions" in actions.keys():
@@ -239,10 +245,10 @@ class CountryAgent(object):
             )
 
     def generate_correct_format_actions(
-        self, prompt: str, round_time: int
+        self, prompt: str, round_time: int, first_generate: bool = False
     ) -> tuple[list[Action], list[Action], str]:
         """借助秘书代理检查，生成符合格式要求的动作序列"""
-        if round_time == 1:
+        if first_generate:
             """第一回合，只检查new_actions"""
             action_check_times = 0
             new_prompt = prompt
@@ -328,7 +334,7 @@ class CountryAgent(object):
         secretary_agree = False
         while not secretary_agree:
             actions, _, thought_process = self.generate_correct_format_actions(
-                plan_prompt, 1
+                plan_prompt, 1, True
             )
             log.info(f"No.1 round, {self.name} made actions: {actions}")
 
@@ -364,6 +370,7 @@ class CountryAgent(object):
         country_rels: str,
         received_requests: list[NlAction],
         minister_advice: dict[str, str],
+        first_generate: bool = False,
     ) -> tuple[list[NlAction], list[NlAction], str]:
         new_formatted_messages = []
         res_formatted_messages = []
@@ -391,7 +398,9 @@ class CountryAgent(object):
         secretary_agree = False
         while not secretary_agree:
             new_actions, res_actions, thought_process = (
-                self.generate_correct_format_actions(plan_prompt, round_time)
+                self.generate_correct_format_actions(
+                    plan_prompt, round_time, first_generate=first_generate
+                )
             )
             log.info(
                 f"No.{round_time} round, {self.name} made actions: {new_actions}, {res_actions}"
@@ -477,6 +486,7 @@ class CountryAgent(object):
                     "Military Minister": "How many military weapons do we have, and what is the gap between our military strength and that of the enemy?",
                     "Finance Minister": "What is the economic condition of our country and can we sustain the war against our enemy?",
                     "Foreign Minister": "Which countries are our potential Allies, which countries are our potential enemies, and what is the military and economic strength of the potential enemies?",
+                    "Geography Minister": "What is the geographical condition of our country, and how can we use it to our advantage in the war?",
                 }
         return questions
 
@@ -516,7 +526,12 @@ class CountryAgent(object):
         return asyncio.run(gather_suggestions())
 
     def plan_v2(
-        self, round_time: int, trigger: str, current_situation: str, dump_json: callable,first:bool=False
+        self,
+        round_time: int,
+        trigger: str,
+        current_situation: str,
+        dump_json: callable,
+        first: bool = False,
     ):
         new_formatted_messages = []
         res_formatted_messages = []
@@ -565,7 +580,7 @@ class CountryAgent(object):
         minister_suggestions = self.get_minister_suggestions(
             ques_to_ministers,
             current_situation,
-            received_requests_str if round_time > 1 else "",
+            received_requests_str if not first else "",
         )
         output(
             "### Minister Suggestions:\n"
@@ -595,6 +610,7 @@ class CountryAgent(object):
                     country_rels=country_rels,
                     received_requests=received_requests,
                     minister_advice=minister_suggestions,
+                    first_generate=first,
                 )
             )
 
@@ -603,7 +619,9 @@ class CountryAgent(object):
             new_formatted_messages, res_formatted_messages
         )
         dump_json(
-            "process", round_time, {"actions": actions_data, "thought": thought_process}
+            "process",
+            round_time,
+            {"country": self.name, "actions": actions_data, "thought": thought_process},
         )
         output("### Thought Process:\n" + thought_process + "\n")
 

@@ -270,6 +270,8 @@ class Board:
             if source == source_country:
                 continue
             for t, r in rels.items():
+                if t == source_country:
+                    continue
                 if r != CountryRel.N:
                     c1 = sorted([source, t])[0]
                     c2 = sorted([source, t])[1]
@@ -312,12 +314,15 @@ class Board:
             CountryRel.T: "forged non-intervention treaties",
             CountryRel.P: "forged peace agreement",
         }
-        current_situation += "\nFor other countries:\n"
+
+        current_situation_other = ""
         for c, rels in other_countries_rels.items():
             # assert isinstance(c, str)
             # assert isinstance(rels, dict)
-            current_situation += f"\n{c} has {', '.join([nl_str.get(v) + ' with ' + k for k, v in rels.items()])}."
-
+            current_situation_other += f"\n{c} has {', '.join([nl_str.get(v) + ' with ' + k for k, v in rels.items()])}."
+        if current_situation_other:
+            current_situation += "\nFor other countries:" + current_situation_other
+            
         if current_situation:
             return "You have " + current_situation
         return current_situation
