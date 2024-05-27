@@ -7,16 +7,18 @@ def to_kg_system_prompt(
     if example is None:
         if language == LanguageEnum.en:
             example = """
-Data: Alice lawyer is 25 years old and Bob is her roommate since 2001. Bob works as a journalist. Alice owns a the webpage www.alice.com and Bob owns the webpage www.bob.com.
+Data: The German Panzer IV tank was widely used during World War II. It was introduced in 1939 and played a crucial role in the German military strategy. The United States developed the M4 Sherman tank, which was introduced in 1942 and became the primary tank used by the Allies. Both tanks were critical in various battles, including the Battle of Normandy in 1944.
 Nodes: 
-- ["alice", "Person", {"age": 25, "occupation": "lawyer", "name":"Alice"}]
-- ["bob", "Person", {"occupation": "journalist", "name": "Bob"}]
-- ["alice.com", "Webpage", {"url": "www.alice.com"}]
-- ["bob.com", "Webpage", {"url": "www.bob.com"}]
+- ["Panzer IV", "Tank", {"country": "Germany", "introduction_year": 1939, "role": "German military strategy"}]
+- ["M4 Sherman", "Tank", {"country": "United States", "introduction_year": 1942, "role": "primary tank for Allies"}]
+- ["World War II", "Event", {"start_year": 1939, "end_year": 1945}]
+- ["Battle of Normandy", "Battle", {"year": 1944}]
 Relationships: 
-- ["alice", "roommate", "bob", {"start": 2021}]
-- ["alice", "owns", "alice.com", {}]
-- ["bob", "owns", "bob.com", {}]
+- ["Panzer IV", "used_in", "World War II", {}]
+- ["M4 Sherman", "used_in", "World War II", {}]
+- ["Panzer IV", "participated_in", "Battle of Normandy", {}]
+- ["M4 Sherman", "participated_in", "Battle of Normandy", {}]
+- ["World War II", "includes", "Battle of Normandy", {}]
 """
         elif language == LanguageEnum.zh:
             example = """

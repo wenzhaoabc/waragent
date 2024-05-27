@@ -16,6 +16,7 @@ from .enums import LanguageEnum
 from .kg_clean import DataDisambiguation
 from .kg_cypher import KG2Cypher
 
+
 # step 1: 提取知识图谱 extract_kg
 # step 2: 对知识图谱中的节点和关系进行清洗 clean_kg
 # step 3: 将知识图谱上传到阿里云OSS text_neo4j/{timestamp_str}_kg.json
@@ -43,17 +44,19 @@ def extract_kgs_neo4j(
     kg_filename = f"text_neo4j/{timestamp_str}_kg.json"
     file_oss_url = upload_file_to_oss(kg_filename, json.dumps(kg))
 
+    execute_results = neo4j.import_json(file_oss_url)
+
     # 创建导入数据的cypher脚本
-    t = KG2Cypher(llm=llm, file_url=file_oss_url)
-    cypher = t.process(kg)
-    result["cypher"] = cypher
-    callback({"type": "kg", "data": cypher, "step": "cypher"})
+    # t = KG2Cypher(llm=llm, file_url=file_oss_url)
+    # cypher = t.process(kg)
+    # result["cypher"] = cypher
+    callback({"type": "kg", "data": "inner cypher script", "step": "cypher"})
 
     # 将知识图谱导入到图数据库Neo4j中
-    execute_results = []
-    for k, v in cypher.items():
-        res = neo4j.load_cypher(v)
-        execute_results.append(res)
+    # execute_results = []
+    # for k, v in cypher.items():
+    #     res = neo4j.load_cypher(v)
+    #     execute_results.append(res)
 
     callback({"type": "kg", "data": execute_results, "step": "execute"})
 

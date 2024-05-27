@@ -167,6 +167,22 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.close()
 
 
+@app.get("/")
+async def app_dev_test(q: str = None):
+    from src.datasource.neo4jdata.neo4j_db import Neo4JDB
+    from src.datasource import Neo4jAnswers
+    from src.llm import LLM
+
+    neo4j = Neo4JDB()
+    schema = neo4j.get_schema()
+    print(schema)
+    na = Neo4jAnswers(LLM('gpt-4o'))
+    question = q
+    answer = na.neo4j_answers(question)
+    print(answer)
+    return {"schema": schema, "answer": answer}
+
+
 if __name__ == "__main__":
     import uvicorn
 

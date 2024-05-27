@@ -3,6 +3,7 @@ import re
 
 from neo4j import GraphDatabase
 from .cypher_snippets import nodes_cypher, relationships_cypher
+from src.utils import log
 
 node_properties_query = """
 CALL apoc.meta.data()
@@ -53,11 +54,13 @@ class Neo4JDB:
         with GraphDatabase.driver(self.uri, auth=self.auth) as driver:
             records, summary, keys = driver.execute_query(cypher)
         res = {"records": [r.data() for r in records], "keys": keys}
+        log.info(f"Loading cypher: cypher: {cypher}; res: {res}")
         return res
 
     def query(self, cypher: str, params: dict | None = None) -> list:
         with GraphDatabase.driver(self.uri, auth=self.auth) as driver:
             result, _, _ = driver.execute_query(cypher, parameters_=params)
+        log.info(f"Querying cypher: cypher: {cypher}; res: {result}")
         return [r.data() for r in result]
 
     def get_schema(self):
@@ -80,6 +83,7 @@ class Neo4JDB:
         return data[0]["output"]
 
     def clean_db(self):
+        log.warning("Cleaning the neo4j database")
         self.load_cypher(
             """
             MATCH (n) DETACH DELETE n
@@ -89,6 +93,7 @@ class Neo4JDB:
     def import_json(self, file_url: str):
         nodes_script = re.sub(r'(?<=apoc.load.json\(").+?(?="\))', file_url, nodes_cypher)
         relations_script = re.sub(r'(?<=apoc.load.json\(").+?(?="\))', file_url, relationships_cypher)
+        log.info(f"Importing nodes: cypher: {nodes_script}; Importing relationships: cypher: {relations_script}")
         with GraphDatabase.driver(self.uri, auth=self.auth) as driver:
             record_n = driver.execute_query(nodes_script)
             print("node", record_n)
