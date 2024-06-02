@@ -9,14 +9,14 @@ from src.profiles.agent_actions import ActionType, ActionTypeList
 
 
 def p_global_system_prompt(
-        self_country: CountryProfile,
-        country_profiles: list[CountryProfile],
-        actions: list[str],
+    self_country: CountryProfile,
+    country_profiles: list[CountryProfile],
+    actions: list[str],
 ) -> str:
     """全局系统提示"""
     country_name = self_country.country_name
     country_names = [c.country_name for c in country_profiles]
-    # 你处在一个战争游戏中，在这个游戏中共有{}个国家，分别是{}.
+    # 你处在一个战争游戏中，在这个游戏中共有{}个国家，分别是{}，每个国家都有自己的总统、军事大臣、外交大臣,财政大臣,地理大臣，你是{}的总统。
     # 在每一轮的交互中，每个国家可以做出的动作包括：宣战、和谈、调整军费、调整外交政策、调整财政政策等。
     # 具体的决策由总统做出.
     # 你作为这个国家的总统，需要根据你的判断做出最正确的决策，这个决策的目标是使你的国家在这场战争游戏中取得最终的胜利。
@@ -31,7 +31,7 @@ def p_global_system_prompt(
 
 
 def p_countries_description(
-        self_country: CountryProfile, countries: list[CountryProfile]
+    self_country: CountryProfile, countries: list[CountryProfile]
 ) -> str:
     """国家代理的描述"""
     name = self_country.country_name
@@ -84,7 +84,7 @@ def p_ask_minister_advice(self_country: CountryProfile) -> str:
             "Military Minister": "Country AB is at war with Country CD. Our national security is under serious threat. How ready are our forces in terms of numbers, training, equipment, intelligence, etc.? Who are our Allies and partners?",
             "Finance Minister": "Our economy is in a downturn. What is the current state of our economy? What are the main sources of income and expenditure? What is the current state of our national debt?",
             "Foreign Minister": "Country AB is at war with Country CD. What is the current state of the war? What are the main objectives of the war? What are the main threats to our country? What are the main opportunities for our country?",
-            "Geography Minister": "Where is Country AB?"
+            "Geography Minister": "Where is Country AB? What about our neighbors?"
         })}"""
         "\n```"
     )
@@ -167,8 +167,8 @@ Should you be alert about their actions or they can be potentially allies? Shoul
 6. Summarize Analysis on Situation
 Based on your thoughts on *Thought on Situation*, *Analysis on Ally Countries Actions*, *Identification on Enemy Countries based on Current Situation*, *Analysis on Enemy Countries Actions*, and *Analysis on Situation about Other Countries*, summarize your thought and think about what actions to perform in natural language text.
 
-Analysis on Requests from Other Countries
-Based on the "Current Situation" and your thoughts on the six sub-steps, how would you respond to the requests?
+7. Analysis on Requests from Other Countries
+Based on the "Current Situation" and your thoughts on the above six sub-steps, how would you respond to the requests?
 Based on your thoughts on the above steps, summarize your thought and think about what actions to perform in natural language text.
 """
 
@@ -181,11 +181,11 @@ def p_current_situation(current_situation: str) -> str:
 
 
 def p_ask_minister_instruction(
-        self_country: CountryProfile,
-        countries: list[CountryProfile],
-        action_types: list[ActionType],
-        current_situation: str,
-        received_requests: str,
+    self_country: CountryProfile,
+    countries: list[CountryProfile],
+    action_types: list[ActionType],
+    current_situation: str,
+    received_requests: str,
 ) -> str:
     """
     向各位大臣询问当前情况下的建议
@@ -204,36 +204,8 @@ Based on the advice of the ministers, you should make the most correct decision.
 """
 
 
-def p_first_generate_actions(
-        self_country: CountryProfile,
-        country_profiles: list[CountryProfile],
-        action_types: list[ActionType],
-        current_situation: str,
-        minister_advice: dict[str, str],
-        round_times: int,
-) -> str:
-    """
-    根据国家大臣建议和实际情形生成首次动作
-    """
-    actions = [a.name for a in action_types]
+def p_first_generate_actions_example() -> str:
     return f"""
-{p_global_system_prompt(self_country, country_profiles, actions)}
-{p_countries_description(self_country, country_profiles)}
-
-Please follow the instructions below.
-Your task is to evaluate the current situation in natural language and decide the most beneficial yet secure course of the action.
-You need to first develop your thoughts in natural language step-by-step, then choose your action (action name) with action input.
-For the final action list, generate a JSON file to present your final action list.
-
-{p_first_thought_process()}
-The Actions you can perform:
-Choose action among {', '.join(actions)}
-
-Action Detail and Corresponding Action Inputs:
-{p_actions_description(action_types)}
-
-{p_current_situation(current_situation)}
-
 Please present your actions in JSON format with keys being Action Names and values being Corresponding Action Inputs.
 For example:
 ```json
@@ -260,10 +232,47 @@ My Thought Process:
 Actions in JSON format:
 ```json
 <Your actions>
+```
 """
 
 
-def p_country_rel_description(country_rels: str, country_profiles: list[CountryProfile]) -> str:
+def p_first_generate_actions(
+    self_country: CountryProfile,
+    country_profiles: list[CountryProfile],
+    action_types: list[ActionType],
+    current_situation: str,
+    minister_advice: dict[str, str],
+    round_times: int,
+) -> str:
+    """
+    根据国家大臣建议和实际情形生成首次动作
+    """
+    actions = [a.name for a in action_types]
+    return f"""
+{p_global_system_prompt(self_country, country_profiles, actions)}
+{p_countries_description(self_country, country_profiles)}
+
+Please follow the instructions below.
+Your task is to evaluate the current situation in natural language and decide the most beneficial yet secure course of the action.
+You need to first develop your thoughts in natural language step-by-step, then choose your action (action name) with action input.
+For the final action list, generate a JSON file to present your final action list.
+
+{p_first_thought_process()}
+The Actions you can perform:
+Choose action among {', '.join(actions)}
+
+Action Detail and Corresponding Action Inputs:
+{p_actions_description(action_types)}
+
+{p_current_situation(current_situation)}
+
+{p_first_generate_actions_example()}
+"""
+
+
+def p_country_rel_description(
+    country_rels: str, country_profiles: list[CountryProfile]
+) -> str:
     names = [c.country_name for c in country_profiles]
     names_str = [f'The letter {n.split(" ")[1]} stand for {n}.' for n in names]
     return f"""
@@ -273,19 +282,63 @@ The symbol '&' indicates that the two countries have established a military alli
 The symbol 'o' indicates that the two countries have established an non-intervention treaties.
 The symbol '~' indicates that the two countries have established a peace agreements.
 The symbol '-' indicates that the two countries have not yet established military ties.
-{country_rels}
+{country_rels if country_rels else ""}
+"""
+
+
+def p_generate_json_actions_example() -> str:
+    return f"""
+Please Collect your answer in "response_actions" and "new_actions" into a JSON file with two keys: 'response_actions' and 'new_actions' with the corresponding values are the JSON files you have generated for "Actions to Respond to Requests" and "New Actions to Perform".
+For example:
+```json
+{json.dumps({
+        "response_actions": {
+            "Accept Non-Intervention Treaty": ["Country AB", "Country BC"],
+            "Betray Military Alliance": ["Country CD"],
+            "Send Message": {
+                "Country CD": {
+                    "content": "Considering that Country XX is waging war against Country YY, our country will certify your proposed peace agreement."
+                },
+                "Country DE": {
+                    "content": "We are willing to accept the non-intervention treaty."
+                }
+            }
+        },
+        "new_actions": {
+            "General Mobilization": {},
+            "Declare War": ["Country DD"],
+            "Publish Non-Intervention Treaty": ["Country MM", "Country TA", "Country UN"],
+            "Send Message": {
+                "Country CD": {
+                    "content": "As the world’s balance of power is at risk, we seek to understand your position on the current events and how we might collaborate to ensure peace and stability ."
+                },
+                "Country DA": {
+                    "content": " We welcome a dialogue to discuss potential cooperation against common threats ."
+                }
+            }
+        }
+    })}
+```
+
+Your answer or output should be similar to the form below, thank you.
+My Thought Process:
+<Your thought process>
+Actions in JSON format:
+```json
+<Your actions>
+```
 """
 
 
 def p_later_generate_actions(
-        self_country: CountryProfile,
-        country_profiles: list[CountryProfile],
-        action_types: list[ActionType],
-        country_rels: str,
-        current_situation: str,
-        received_requests: str,
-        minister_advice: dict[str, str],
-        round_times: int,
+    self_country: CountryProfile,
+    country_profiles: list[CountryProfile],
+    action_types: list[ActionType],
+    country_rels: str,
+    current_situation: str,
+    received_requests: str,
+    minister_advice: dict[str, str],
+    round_times: int,
 ) -> str:
     """
     根据国家大臣建议和实际情形生成动作
@@ -305,42 +358,23 @@ Action Detail and Corresponding Action Inputs:{p_actions_description(action_type
 Design Thought Process : {p_later_action_thought()}
 Past Actions :
 Duration {round_times} days, the countries in the game have made the following actions day by day.
-The relationship between countries is as follows:
-{p_country_rel_description(country_rels, country_profiles)}
+The relationship between countries is as follows:{p_country_rel_description(country_rels, country_profiles)}
 
 {p_current_situation(current_situation)}
 
 Received Requests : 
-{received_requests}
+{received_requests if received_requests else "No requests have been received."}
 
-Please Collect your answer in "response_actions" and "new_actions" into a JSON file with two keys: 'response_actions' and 'new_actions' with the corresponding values are the JSON files you have generated for "Actions to Respond to Requests" and "New Actions to Perform".
-For example:
-```json
-{json.dumps({
-        "response_actions": {
-            "Accept Non-Intervention Treaty": ["Country A", "Country B"],
-            "Betray Military Alliance": ["Country C"],
-            "Send Message": {
-                "Country C": {
-                    "content": "Considering that Country X is waging war against Country Y, our country will certify your proposed peace agreement."
-                },
-                "Country D": {
-                    "content": "We are willing to accept the non-intervention treaty."
-                }
-            }
-        },
-        "new_actions": {
-            "General Mobilization": {},
-            "Declare War": ["Country D"]
-        }
-    })}
-```
+{p_generate_json_actions_example()}
+"""
 
-Your answer or output should be similar to the form below, thank you.
-My Thought Process:
-<Your thought process>
-Actions in JSON format:
-```json
-<Your actions>
-```
+
+def p_extract_json_from_text(
+    actions: list[ActionType], countries_profile: list[CountryProfile]
+) -> str:
+    action_names = [a.name for a in actions]
+    country_names = [c.country_name for c in countries_profile]
+    return """
+Now your task is to extract the JSON string form neutral language text.
+
 """

@@ -28,7 +28,8 @@ class FinanceMinister(BaseMinister):
             f"When making decisions, the President needs to ask the you, the {self.get_role()} about the financial situation of the country\n"
             "The President needs you to understand the country's economy, finances, population, industrial and agricultural production, etc., and you need to obtain enough relevant information through the information provided and external tools to advise the President accordingly."
             "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
-            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
-            "Please advise the President and make a case for everything you have obtained. Please output your results directly."
+            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president."
+            "Please advise the President and make a case for everything you have obtained.\n"
+            "You are talking with the President face to face and please address your proposal directly. Note that your answer should be summarized in 200 words or less."
         )
         return prompt

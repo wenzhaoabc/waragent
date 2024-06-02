@@ -47,10 +47,10 @@ class GeographyMinister(BaseMinister):
             "Post-decision, evaluate the plan's geographical feasibility and offer supplementary views on maximizing geographical advantage."
             "External geographic information systems and data analysis tools are at your disposal to augment your analytical prowess, ensuring precision and foresight in your counsel."
             "You can call tools to get more information, but note that you can only call the tool once in each round. Please summary your questions into one sentence and call the funcation only once.\n"
-            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 300 words or less."
+            "Please summarize your answer according to your current knowledge and the knowledge obtained through the tool, and return your answer to the president. Please note that your answer should be summarized in 200 words or less."
             "The following is the geography profile of your country:\n"
             f"{self.get_geo_profile()}\n\n"
-            "Present your analyses and strategic proposals from a professional geographical standpoint, directed at the President.\n"
+            "You are talking with the President face to face and please address your proposal directly. Note that your answer should be summarized in 200 words or less."
         )
 
         return prompt

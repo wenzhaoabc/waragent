@@ -222,7 +222,7 @@ class SecretaryAgent:
                     "Request Peace Agreement": CountryRel.P,
                 }
                 for action, rel in action_rel_dict.items():
-                    if action_name == action and board.get_rel_pri(source_country, target_country) != rel:
+                    if action_name == action and board.get_rel_pri(source_country, target_country) == rel:
                         suggestions.append(
                             f"{source_country} currently cannot {action} as {source_country} and {target_country} have already formed {action.replace("Request ", "")}. "
                         )

@@ -29,22 +29,31 @@ class LLM(object):
             base_url = os.getenv("ZHIPU_BASE_URL")
             self.client = ZhipuAI(api_key=api_key, base_url=base_url)
 
-    def chat(self, prompt: str, temperature: float = 0.2):
-        timestamp = datetime.now().timestamp()
+    def chat(self, prompt: str, temperature: float = 0.2,template:dict[str,str]=None):
+        timestamp = int(datetime.now().timestamp()*1000)
+        log_prompt = prompt
+        if template:
+            for key, value in template.items():
+                log_prompt = log_prompt.replace(value, f" <{key}> ")
         log.info(
-            f'chat with {self.model} : {json.dumps({"id": timestamp, "model": self.model, "prompt": prompt, "temperature": temperature})}'
+            f'chat with {self.model} : {json.dumps({"id": timestamp, "model": self.model, "prompt": log_prompt, "temperature": temperature})}'
         )
-        completions = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "user", "content": prompt},
-            ],
-            stream=False,
-            temperature=temperature or self.temperature,
-        )
+        completions = None
+        try:
+            completions = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "user", "content": prompt},
+                ],
+                stream=False,
+                temperature=temperature or self.temperature,
+            )
+        except Exception as e:
+            log.error(f"chat with {self.model} error: {e}, id:{timestamp}")
+            return ""
         response = completions.choices[0].message.content
         log.info(
-            f'chat with [{self.model}]: {{"id":{timestamp},"message":{{"role": "user", "content": {prompt}}}, "response": {completions.model_dump_json()}}}'
+            f'chat with [{self.model}]: {{"id":{timestamp},"message":{{"role": "user", "content": {log_prompt}}}, "response": {completions.model_dump_json()}}}'
         )
         return response
 
@@ -65,17 +74,27 @@ class LLM(object):
         log.info(f"chat with [{self.model}]: prompt:{prompt} response:{result}")
         return result
 
-    def generate(self, messages: list[dict[str, str]]) -> str:
-        timestamp = datetime.now().timestamp()
+    def generate(self, messages: list[dict[str, str]],template:dict[str,str]=None) -> str:
+        timestamp = int(datetime.now().timestamp()*1000)
+        log_messages = []
+        if template:
+            for key, value in template.items():
+                for m in messages:
+                    ml = {"role":m["role"],"content":m["content"].replace(value, f" <{key}> ") if m["content"] else None}
+                    log_messages.append(ml)
         log.info(
-            f'chat to {self.model} : {{"id": {timestamp}, "messages": {json.dumps(messages)}}}"}}'
+            f'chat to {self.model} : {{"id": {timestamp}, "messages": {json.dumps(log_messages)}}}"}}'
         )
-        completes = self.client.chat.completions.create(
-            model=self.model, messages=messages, temperature=0.1
-        )
+        try:
+            completes = self.client.chat.completions.create(
+                model=self.model, messages=messages, temperature=0.1
+            )
+        except Exception as e:
+            log.error(f"chat with {self.model} error: {e}, id:{timestamp}")
+            return ""
         response = completes.choices[0].message.content
         log.info(
-            f'chat with [{self.model}]: {{"id": {timestamp},"messages":{json.dumps(messages)},"response":{completes.model_dump_json()} }}'
+            f'chat with [{self.model}]: {{"id": {timestamp},"messages":{json.dumps(log_messages)},"response":{completes.model_dump_json()} }}'
         )
         return response
 
@@ -136,23 +155,42 @@ class LLM(object):
         return res
 
     def chat_with_tools(
-            self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto"
+            self, messages: list[dict[str, str]], tools: list, tool_choices: str = "auto",
+            template:dict[str,str]=None
     ):
-        timestamp = datetime.now().timestamp()
+        timestamp = int(datetime.now().timestamp()*1000)
+        log_messages = []
+        if template:
+            for key, value in template.items():
+                for m in messages:
+                    ml = {"role":m["role"],"content":m["content"].replace(value, f" <{key}> ") if m["content"] else None}
+                    log_messages.append(ml)
         log.info(
-            f"chat with [{self.model}] with function call : {json.dumps({"id": timestamp, "messages": messages, "tools": tools, "tool_choices": tool_choices})}"
+            f"chat with [{self.model}] with function call : {json.dumps({"id": timestamp, "messages": log_messages, "tools": [t["function"]["name"] for t in tools], "tool_choices": tool_choices})}"
         )
-        res = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            stream=False,
-            temperature=self.temperature,
-            tools=tools,
-            tool_choice=tool_choices,
-        )
-        # res = res.model_dump_json()
+        try:
+            if self.model.startswith("qwen"):
+                res = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    stream=False,
+                    temperature=self.temperature,
+                    tools=tools
+                )
+            else:
+                res = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    stream=False,
+                    temperature=self.temperature,
+                    tools=tools,
+                    tool_choice=tool_choices,
+                )
+        except Exception as e:
+            log.error(f"chat with {self.model} error: {e}, id:{timestamp}")
+            return {"message": {"content": "There is nothing to say."}}
         log.info(
-            f'chat with [{self.model}]: {{"id":{timestamp},"messages":{json.dumps(messages)}, "tools":{tools}, "tool_choices":{tool_choices}, "response":{res.model_dump_json()} }}')
+            f'chat with [{self.model}]: {{"id":{timestamp},"messages":{json.dumps(log_messages)}, "tools": {[t["function"]["name"] for t in tools]}, "tool_choices":{tool_choices}, "response":{res.model_dump_json()} }}')
         return res.choices[0]
 
     def max_tokens(self, model_name: str) -> int:
