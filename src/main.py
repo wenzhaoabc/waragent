@@ -18,8 +18,8 @@ from src.utils import log, output, initialize_pipe
 def setup_board(board: Board, initial_status: list = []):
     """初始化国际关系"""
     for status in initial_status:
-        country1 = status["country1"][:2].upper()
-        country2 = status["country2"][:2].upper()
+        country1 = status["country1"]
+        country2 = status["country2"]
         if status["public"]:
             board.set_country_rel(
                 country1,
@@ -72,6 +72,7 @@ def start_simulate(**kwargs):
     countries_profils = [
         c for c in CountryProfileList if c.country_name in default["countries"]
     ]
+    print(default)
 
     board = Board(countries_profils)
     setup_board(board, default["initial_status"])
@@ -148,6 +149,8 @@ def start_simulate(**kwargs):
                     "countries": countries_status,
                 },
             )
+            output(f"## Board:\n{board.output_rels()}\n")
+            output(f"## Board Private:\n{board.output_rels_pri()}\n")
             output("\n")
         output(f"## Board:\n{board.output_rels()}\n")
         output(f"## Board Private:\n{board.output_rels_pri()}\n")

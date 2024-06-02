@@ -24,7 +24,7 @@ Stick : Single country situation
 历史事件匿名化
 
 | Fake Name   | Real Name            | Type     |
-|:------------|:---------------------|:---------|
+| :---------- | :------------------- | :------- |
 | Country FR  | Belgium              | Country  |
 | Country BE  | Germany              | Country  |
 | Country GE  | Switzerland          | Country  |
@@ -96,9 +96,9 @@ Stick : Single country situation
 | Country YU  | (Yugoslavia)         |          |
 | Country AU  | (Austria)            |          |
 | River TI    | (Tisza)              |          |
-| City BU     | (Budapest)           |          |          
-| City DE     | (Debrecen)           |          |          
-| City SZ     | (Szeged)             |          |            
+| City BU     | (Budapest)           |          |
+| City DE     | (Debrecen)           |          |
+| City SZ     | (Szeged)             |          |
 | City MI     | (Miskolc)            |          |
 | City PE     | (Pécs)               |          |
 | City VE     | (Veszprém)           |          |
@@ -138,4 +138,16 @@ Stick : Single country situation
 
 
 
+| country       | military expenditure (billion USD) | army (thousands) | navy (thousands) | air force (thousands) | tank   | armored vehicle | total tonnage of naval vessels (thousand tons) | number of air force fighter jets |
+| ------------- | ---------------------------------- | ---------------- | ---------------- | --------------------- | ------ | --------------- | ---------------------------------------------- | -------------------------------- |
+| Germany       | 5.5                                | 3,750            | 78               | 400                   | 2,409  | N/A             | 515.0                                          | 3,500                            |
+| Japan         | 1.7                                | 1,700            | 150              | 70                    | 2,000  | N/A             | 1,000.0                                        | 3,000                            |
+| Italy         | 1.6                                | 1,200            | 70               | 50                    | 1,500  | N/A             | 430.0                                          | 1,800                            |
+| Hungary       | 0.3                                | 200              | 5                | 10                    | 200    | N/A             | 30.0                                           | 100                              |
+| China         | 0.4                                | 3,000            | N/A              | 30                    | 600    | N/A             | N/A                                            | 300                              |
+| Soviet Union  | 3.0                                | 5,000            | 200              | 500                   | 24,000 | N/A             | 1,000.0                                        | 10,000                           |
+| United States | 1.9                                | 200              | 125              | 50                    | 400    | N/A             | 1,000.0                                        | 2,500                            |
+| Britain       | 1.7                                | 1,200            | 140              | 70                    | 1,000  | N/A             | 1,500.0                                        | 2,000                            |
+| France        | 2.2                                | 2,500            | 100              | 100                   | 3,000  | N/A             | 900.0                                          | 1,500                            |
+| Poland        | 0.2                                | 1,000            | 10               | 20                    | 600    | N/A             | 50.0                                           | 400                              |
 

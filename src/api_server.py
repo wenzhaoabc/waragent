@@ -94,24 +94,23 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.close()
 
 
-@app.websocket("/chat")
+@app.websocket("/retrival")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     r = KnowledgeRetrieval()
-    while True:
-        data = await websocket.receive_json()
-        if data["type"] == "end":
-            break
-        question = data["question"]
-        llm = data.get("llm", "qwen-max")
-        with ThreadPoolExecutor() as executor:
-            loop = asyncio.get_event_loop()
-            kg_future = loop.run_in_executor(executor, r.run, question, "kg")
-            rag_future = loop.run_in_executor(executor, r.run, question, "rag")
-            kg_res = await kg_future
-            await websocket.send_json({"type": "kg", "data": kg_res})
-            rag_res = await rag_future
-            await websocket.send_json({"type": "rag", "data": rag_res})
+    data = await websocket.receive_json()
+    if data.get("type") == "end":
+        await websocket.close()
+    question = data["question"]
+    llm = data.get("llm", "qwen-max")
+    with ThreadPoolExecutor() as executor:
+        loop = asyncio.get_event_loop()
+        kg_future = loop.run_in_executor(executor, r.run, question, "kg")
+        rag_future = loop.run_in_executor(executor, r.run, question, "rag")
+        kg_res = await kg_future
+        await websocket.send_json({"type": "kg", "data": kg_res})
+        rag_res = await rag_future
+        await websocket.send_json({"type": "rag", "data": rag_res})
     await websocket.close()
 
 
@@ -136,14 +135,15 @@ async def websocket_endpoint(websocket: WebSocket):
                 loop = asyncio.get_event_loop()
                 feature = loop.run_in_executor(executor, func)
                 while True:
-                    if parent_conn.poll():
-                        data = parent_conn.recv()
-                        await websocket.send_text(data)
-                    elif feature.done():
+                    if not feature.done():
+                        if parent_conn.poll():
+                            data = parent_conn.recv()
+                            await websocket.send_text(data)
+                        else:
+                            await asyncio.sleep(1)
+                    else:
                         await websocket.send_text(json.dumps({"type": "end"}))
                         break
-                    else:
-                        await asyncio.sleep(1)
         elif request_params["data"]["type"] == "demo":
             # read the demo data from the file and send it to the client
             demo_file = request_params["data"]["file"]
@@ -176,7 +176,7 @@ async def app_dev_test(q: str = None):
     neo4j = Neo4JDB()
     schema = neo4j.get_schema()
     print(schema)
-    na = Neo4jAnswers(LLM('gpt-4o'))
+    na = Neo4jAnswers(LLM("gpt-4o"))
     question = q
     answer = na.neo4j_answers(question)
     print(answer)

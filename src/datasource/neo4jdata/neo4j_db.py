@@ -42,7 +42,9 @@ def schema_text(node_props, rel_props, rels) -> str:
 
 
 class Neo4JDB:
-    def __init__(self, uri: str = None, username: str = None, password: str = None) -> None:
+    def __init__(
+        self, uri: str = None, username: str = None, password: str = None
+    ) -> None:
         uri = uri if uri is not None else os.environ.get("NEO4J_URI")
         username = username if username is not None else os.environ.get("NEO4J_USER")
         password = password if password is not None else os.environ.get("NEO4J_PASSWD")
@@ -91,9 +93,15 @@ class Neo4JDB:
         )
 
     def import_json(self, file_url: str):
-        nodes_script = re.sub(r'(?<=apoc.load.json\(").+?(?="\))', file_url, nodes_cypher)
-        relations_script = re.sub(r'(?<=apoc.load.json\(").+?(?="\))', file_url, relationships_cypher)
-        log.info(f"Importing nodes: cypher: {nodes_script}; Importing relationships: cypher: {relations_script}")
+        nodes_script = re.sub(
+            r'(?<=apoc.load.json\(").+?(?="\))', file_url, nodes_cypher
+        )
+        relations_script = re.sub(
+            r'(?<=apoc.load.json\(").+?(?="\))', file_url, relationships_cypher
+        )
+        log.info(
+            f"Import JSON files to neo4j. url:{file_url} Importing nodes: cypher: {nodes_script}; Importing relationships: cypher: {relations_script}"
+        )
         with GraphDatabase.driver(self.uri, auth=self.auth) as driver:
             record_n = driver.execute_query(nodes_script)
             print("node", record_n)

@@ -53,17 +53,19 @@ class Neo4jAnswers:
             {"role": "user", "content": question},
         ]
 
+        all_query_cyphers = []
         all_query_results = []
 
         for round_num in range(self.max_rounds):
             cypher = self.generate_cypher(messages)
+            all_query_cyphers.append(cypher)
             try:
                 query_result = self.db.query(cypher)
                 all_query_results.append(query_result)
                 messages.append(
                     {
                         "role": "user",
-                        "content": f"Query results round {round_num + 1}: {query_result}",
+                        "content": f"Query results round {round_num + 1}: cypher:{cypher} reslut:{query_result} \n\n Please try more query cyphers!",
                     }
                 )
             except Exception as e:
@@ -71,13 +73,14 @@ class Neo4jAnswers:
                     {"role": "user", "content": self.p_try_again_prompt(cypher, str(e))}
                 )
                 cypher = self.generate_cypher(messages)
+                all_query_cyphers.append(cypher)
                 try:
                     query_result = self.db.query(cypher)
                     all_query_results.append(query_result)
                     messages.append(
                         {
                             "role": "user",
-                            "content": f"Query results round {round_num + 1}: {query_result}",
+                            "content": f"Query results round {round_num + 1}: cypher:{cypher} reslut:{query_result} \n\n Please try more query cyphers!",
                         }
                     )
                 except Exception as e:
