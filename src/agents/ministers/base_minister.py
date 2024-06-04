@@ -21,7 +21,7 @@ class BaseMinister:
         self.country_name = country_profile.country_name
         self.countries_profile = countries_profile
         self.action_types = action_types
-        self.llm = LLM("glm-3-turbo")
+        self.llm = LLM("gpt-3.5-turbo")
         self.tools = AllTools
         self.tool_choices = tool_choices
         self.knowledge = knowledge

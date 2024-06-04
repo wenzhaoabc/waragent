@@ -14,7 +14,7 @@ class Anonymize:
         country_profile: CountryProfile,
         countries_profile: list[CountryProfile],
     ):
-        self.llm = LLM("gpt-a")
+        self.llm = LLM("glm-3-turbo")
         self.country_profile = country_profile
         self.countries_profile = countries_profile
 

@@ -12,7 +12,7 @@ from .query_prompts import p_get_fewshot_examples, p_generate_cypher_prompt
 class Neo4jAnswers:
     def __init__(self, llm: LLM = None, max_rounds: int = 3):
         if llm is None:
-            llm = LLM()
+            llm = LLM("gpt-4o-ca")
         self.llm = llm
         self.db = Neo4JDB()
         self.summarize = SummarizeCypherResult(llm, exclude_embeddings=False)
@@ -46,7 +46,9 @@ class Neo4jAnswers:
         return cypher
 
     def neo4j_answers(self, question: str) -> str:
-        neo4j_schema = self.db.get_schema()
+        if self.db.schema == "":
+            neo4j_schema = self.db.get_schema()
+        neo4j_schema = self.db.schema
         system_prompt = self.p_system_prompt(neo4j_schema)
         messages = [
             {"role": "system", "content": system_prompt},
