@@ -1,153 +1,36 @@
 # War Agent
 
-基于LLM与KG的历史战争模拟器
+Historical War Simulation Based on LLM and KG.
 
-## 项目架构
+## Project Structure
 
-ActionTypyList
-
-Empty Input:        Wait Without Action, General Mobilization,
-Dict Input:         Present Peace Agreement, Send Message
-Country List Input: ...15 actions
-
-Board & Stick
+One main decision-making agent and four auxiliary agents.
 
 Board : Public global situation
 Stick : Single country situation
 
-## 数据存储
+1. only president : branch [rq1_only_president](https://github.com/wenzhaoabc/waragent/tree/rq1_only_president)
+2. president with minister : branch [rq2_president_minister](https://github.com/wenzhaoabc/waragent/tree/rq2_president_minister)
+3. president with minister and external tools : branch [rq3_president_minister_tool](https://github.com/wenzhaoabc/waragent/tree/rq3_president_minister_tool)
 
-**Neo4J**
+## Data Storage
 
-**RAG**
+1. vector database
+2. graph database
 
-历史事件匿名化
+## Research Questions
 
-| Fake Name   | Real Name            | Type     |
-| :---------- | :------------------- | :------- |
-| Country FR  | Belgium              | Country  |
-| Country BE  | Germany              | Country  |
-| Country GE  | Switzerland          | Country  |
-| Country SW  | Italy                | Country  |
-| Country IT  | Spain                | Country  |
-| Country SP  | Luxembourg           | Country  |
-| Country DK  | Denmark              | Country  |
-| Country PO  | Poland               | Country  |
-| Country AU  | Austria              | Country  |
-| Country FR  | France               | Country  |
-| Country CZ  | Czechoslovakia       | Country  |
-| Country SW  | Switzerland          | Country  |
-| Country LU  | Luxembourg           | Country  |
-| Country BE  | Belgium              | Country  |
-| Country NE  | Netherlands          | Country  |
-| Sea NO      | North Sea            | Sea      |
-| Sea BA      | Baltic Sea           | Sea      |
-| Sea ME      | Mediterranean Sea    | Sea      |
-| Port HA     | Hamburg              | Port     |
-| Port KI     | Kiel                 | Port     |
-| Ocean AT    | Atlantic Ocean       | Ocean    |
-| Mountain AL | Alps                 | Mountain |
-| Mountain PY | Pyrenees             | Mountain |
-| Mountain MC | Massif Central       | Mountain |
-| Mountain VO | Vosges               | Mountain |
-| River SE    | Seine                | River    |
-| River LO    | Loire                | River    |
-| River GA    | Garonne              | River    |
-| River RH    | Rhone                | River    |
-| Mountain AL | (Alps)               | Mountain |
-| Mountain HR | (Harz)               | Mountain |
-| Mountain ER | (Eifel)              | Mountain |
-| Mountain BO | (Bohemian Forest)    | Mountain |
-| River RH    | (Rhine)              | River    |
-| River EL    | (Elbe)               | River    |
-| River DA    | (Danube)             | River    |
-| River OD    | (Oder)               | River    |
-| City BE     | (Berlin)             | City     |
-| City HA     | (Hamburg)            | City     |
-| City MU     | (Munich)             | City     |
-| City FR     | (Frankfurt)          | City     |
-| City CO     | (Cologne)            | City     |
-| Area RU     | (Ruhr)               | Area     |
-| City ES     | (Essen)              | City     |
-| Sea EN      | (North Sea)          |          |
-| Sea IR      | (Irish Sea)          |          |
-| Channel EN  | (English Channel)    |          |
-| Ocean AT    | (Atlantic Ocean)     |          |
-| Port LO     | (London)             |          |
-| Port LI     | (Liverpool)          |          |
-| Port SO     | (Southampton)        |          |
-| Port GL     | (Glasgow)            |          |
-| Mountain GR | (Grampian Mountains) |          |
-| Mountain CA | (Cambrian Mountains) |          |
-| Mountain PE | (Pennines)           |          |
-| River TH    | (Thames)             |          |
-| River SE    | (Severn)             |          |
-| River ME    | (Mersey)             |          |
-| River CL    | (Clyde)              |          |
-| City LO     | (London)             |          |
-| City BI     | (Birmingham)         |          |
-| City LI     | (Liverpool)          |          |
-| City GL     | (Glasgow)            |          |
-| City MA     | (Manchester)         |          |
-| Ocean ME    | (Mediterranean)      |          |
-| Country HU  | (Hungary)            |          |
-| Country SL  | (Slovakia)           |          |
-| Country RO  | (Romania)            |          |
-| Country YU  | (Yugoslavia)         |          |
-| Country AU  | (Austria)            |          |
-| River TI    | (Tisza)              |          |
-| City BU     | (Budapest)           |          |
-| City DE     | (Debrecen)           |          |
-| City SZ     | (Szeged)             |          |
-| City MI     | (Miskolc)            |          |
-| City PE     | (Pécs)               |          |
-| City VE     | (Veszprém)           |          |
-| River DA    | (Danube)             |          |
-| River TI    | (Tisza)              |          |
-| City BU     | (Budapest)           |          |
-| Country SU  | (Soviet Union)       |          |
-| Country GE  | (Germany)            |          |
-| Country PO  | (Poland)             |          |
-| Country FI  | (Finland)            |          |
-| Country ES  | (Estonia)            |          |
-| Country LA  | (Latvia)             |          |
-| Country LI  | (Lithuania)          |          |
-| Country RO  | (Romania)            |          |
-| Country TU  | (Turkey)             |          |
-| Country IR  | (Iran)               |          |
-| Country AF  | (Afghanistan)        |          |
-| Country CH  | (China)              |          |
-| Sea CA      | (Caspian Sea)        |          |
-| Sea BL      | (Black Sea)          |          |
-| Mountain UR | (Ural Mountains)     |          |
-| Mountain CA | (Caucasus Mountains) |          |
-| Mountain AL | (Altai Mountains)    |          |
-| River VO    | (Volga River)        |          |
-| River DN    | (Dnieper River)      |          |
-| River OB    | (Ob River)           |          |
-| River YE    | (Yenisei River)      |          |
-| River LE    | (Lena River)         |          |
-| City M      | (Moscow)             |          |
-| City LE     | (Leningrad)          |          |
-| City KI     | (Kiev)               |          |
-| City NO     | (Novosibirsk)        |          |
-| Region DO   | (Donbas)             |          |
-| Region KU   | (Kuznetsk Basin)     |          |
+1. The quality of the simulation system
+2. The reason of the war
 
 
+## Quick Start
 
+```bash
+git clone https://github.com/wenzhaoabc/waragent.git
+git checkout rq3_president_minister_tool
 
-
-| country       | military expenditure (billion USD) | army (thousands) | navy (thousands) | air force (thousands) | tank   | armored vehicle | total tonnage of naval vessels (thousand tons) | number of air force fighter jets |
-| ------------- | ---------------------------------- | ---------------- | ---------------- | --------------------- | ------ | --------------- | ---------------------------------------------- | -------------------------------- |
-| Germany       | 5.5                                | 3,750            | 78               | 400                   | 2,409  | N/A             | 515.0                                          | 3,500                            |
-| Japan         | 1.7                                | 1,700            | 150              | 70                    | 2,000  | N/A             | 1,000.0                                        | 3,000                            |
-| Italy         | 1.6                                | 1,200            | 70               | 50                    | 1,500  | N/A             | 430.0                                          | 1,800                            |
-| Hungary       | 0.3                                | 200              | 5                | 10                    | 200    | N/A             | 30.0                                           | 100                              |
-| China         | 0.4                                | 3,000            | N/A              | 30                    | 600    | N/A             | N/A                                            | 300                              |
-| Soviet Union  | 3.0                                | 5,000            | 200              | 500                   | 24,000 | N/A             | 1,000.0                                        | 10,000                           |
-| United States | 1.9                                | 200              | 125              | 50                    | 400    | N/A             | 1,000.0                                        | 2,500                            |
-| Britain       | 1.7                                | 1,200            | 140              | 70                    | 1,000  | N/A             | 1,500.0                                        | 2,000                            |
-| France        | 2.2                                | 2,500            | 100              | 100                   | 3,000  | N/A             | 900.0                                          | 1,500                            |
-| Poland        | 0.2                                | 1,000            | 10               | 20                    | 600    | N/A             | 50.0                                           | 400                              |
-
+cd waragent
+pip install -r requirements.txt
+python src/main.py
+```
